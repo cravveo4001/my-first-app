@@ -521,19 +521,35 @@ ${userInfoText}
     // 초기화
     updateUsageDisplay();
 
-    // 방문자 카운터 로드
+    // 방문자 카운터 로드 (외부 서비스 사용)
     async function loadVisitorCount() {
+        const visitorCountEl = document.getElementById('visitor-count');
+        if (!visitorCountEl) return;
+
         try {
-            const response = await fetch('/api/visitor');
+            // CountAPI 사용 (무료 외부 서비스)
+            const namespace = 'craveo-youtube-recommender';
+            const key = 'visits';
+            const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
             const result = await response.json();
-            if (result.success) {
-                const visitorCountEl = document.getElementById('visitor-count');
-                if (visitorCountEl) {
-                    visitorCountEl.textContent = `총 방문자: ${result.count.toLocaleString()}명`;
-                }
+
+            if (result && result.value) {
+                visitorCountEl.textContent = `총 방문자: ${result.value.toLocaleString()}명`;
+            } else {
+                visitorCountEl.textContent = '총 방문자: -';
             }
         } catch (error) {
             console.error('방문자 카운터 로드 실패:', error);
+            // 실패 시 로컬 API 시도 (로컬 개발용)
+            try {
+                const localResponse = await fetch('/api/visitor');
+                const localResult = await localResponse.json();
+                if (localResult.success) {
+                    visitorCountEl.textContent = `총 방문자: ${localResult.count.toLocaleString()}명`;
+                }
+            } catch {
+                visitorCountEl.textContent = '총 방문자: -';
+            }
         }
     }
 
