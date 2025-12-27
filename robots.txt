@@ -1,0 +1,8 @@
+# robots.txt for AI YouTube Channel Recommender
+# https://craveo.com
+
+User-agent: *
+Allow: /
+
+# Sitemap (optional - add if you have one)
+# Sitemap: https://craveo.com/sitemap.xml
