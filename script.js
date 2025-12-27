@@ -554,4 +554,12 @@ ${userInfoText}
     }
 
     loadVisitorCount();
+
+    // FAQ 아코디언 토글
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const faqItem = button.parentElement;
+            faqItem.classList.toggle('active');
+        });
+    });
 });
