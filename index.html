@@ -24,9 +24,38 @@
                     <button class="lang-option" data-lang="zh">🇨🇳 中文</button>
                 </div>
             </div>
-            <h1 data-i18n="title">🎬 AI가 추천해주는 유튜브 채널</h1>
-            <p class="subtitle" data-i18n="subtitle">당신에게 딱 맞는 유튜브 채널을 찾아드립니다</p>
+            <h1 data-i18n="title">🎬 3개 AI가 분석하는 맞춤 유튜브 채널</h1>
+            <p class="subtitle" data-i18n="subtitle">Gemini, ChatGPT, Claude가 당신의 취향을 분석하여 최적의 채널을 추천합니다</p>
+
+            <!-- AI 기술 배지 (클릭 시 공식 사이트로 이동) -->
+            <div class="tech-badges">
+                <a href="https://gemini.google.com/" target="_blank" class="tech-badge gemini">🤖 Gemini</a>
+                <a href="https://chat.openai.com/" target="_blank" class="tech-badge chatgpt">💬 ChatGPT</a>
+                <a href="https://claude.ai/" target="_blank" class="tech-badge claude">🧠 Claude</a>
+            </div>
         </header>
+
+        <!-- 특징 섹션 (클릭 시 폼으로 스크롤) -->
+        <section class="features-section">
+            <div class="feature-card"
+                onclick="document.getElementById('recommendation-form').scrollIntoView({behavior: 'smooth'})">
+                <span class="feature-icon">⚡</span>
+                <h3 data-i18n="featureAiTitle">실시간 AI 분석</h3>
+                <p data-i18n="featureAiDesc">3개 AI 엔진이 동시에 분석하여 다양한 관점의 추천을 제공합니다</p>
+            </div>
+            <div class="feature-card"
+                onclick="document.getElementById('recommendation-form').scrollIntoView({behavior: 'smooth'})">
+                <span class="feature-icon">🎯</span>
+                <h3 data-i18n="featurePersonalTitle">맞춤형 추천</h3>
+                <p data-i18n="featurePersonalDesc">연령, 관심사, 스타일을 분석하여 개인화된 채널을 추천합니다</p>
+            </div>
+            <div class="feature-card"
+                onclick="document.getElementById('recommendation-form').scrollIntoView({behavior: 'smooth'})">
+                <span class="feature-icon">🔒</span>
+                <h3 data-i18n="featurePrivacyTitle">개인정보 보호</h3>
+                <p data-i18n="featurePrivacyDesc">입력 정보는 서버에 저장되지 않으며 즉시 삭제됩니다</p>
+            </div>
+        </section>
 
         <main>
             <!-- 사용 횟수 및 API 키 설정 -->
