@@ -27,8 +27,102 @@ document.addEventListener('DOMContentLoaded', function () {
         usageCount: 'youtube_recommender_usage_count',
         geminiKey: 'youtube_recommender_gemini_key',
         chatgptKey: 'youtube_recommender_chatgpt_key',
-        claudeKey: 'youtube_recommender_claude_key'
+        claudeKey: 'youtube_recommender_claude_key',
+        language: 'youtube_recommender_language'
     };
+
+    // 언어 설정
+    const LANGUAGES = {
+        ko: { flag: '🇰🇷', name: '한국어' },
+        en: { flag: '🇺🇸', name: 'English' },
+        ja: { flag: '🇯🇵', name: '日本語' },
+        zh: { flag: '🇨🇳', name: '中文' }
+    };
+
+    let currentLang = localStorage.getItem(STORAGE_KEYS.language) || 'ko';
+    let translations = {};
+
+    // 번역 파일 로드
+    async function loadTranslations(lang) {
+        try {
+            const response = await fetch(`/lang/${lang}.json`);
+            translations = await response.json();
+            applyTranslations();
+        } catch (error) {
+            console.error('번역 파일 로드 실패:', error);
+        }
+    }
+
+    // 번역 적용
+    function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[key]) {
+                el.textContent = translations[key];
+            }
+        });
+
+        // placeholder 번역
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[key]) {
+                el.placeholder = translations[key];
+            }
+        });
+
+        // 페이지 제목 업데이트
+        if (translations.title) {
+            document.title = translations.title.replace('🎬 ', '');
+        }
+    }
+
+    // 언어 선택기 초기화
+    function initLanguageSelector() {
+        const langBtn = document.getElementById('lang-btn');
+        const langDropdown = document.getElementById('lang-dropdown');
+        const currentLangFlag = document.getElementById('current-lang-flag');
+        const currentLangText = document.getElementById('current-lang-text');
+
+        // 현재 언어 표시
+        if (LANGUAGES[currentLang]) {
+            currentLangFlag.textContent = LANGUAGES[currentLang].flag;
+            currentLangText.textContent = LANGUAGES[currentLang].name;
+        }
+
+        // 드롭다운 토글
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('hidden');
+            langBtn.classList.toggle('active');
+        });
+
+        // 언어 선택
+        document.querySelectorAll('.lang-option').forEach(option => {
+            option.addEventListener('click', async (e) => {
+                const lang = e.target.getAttribute('data-lang');
+                currentLang = lang;
+                localStorage.setItem(STORAGE_KEYS.language, lang);
+
+                currentLangFlag.textContent = LANGUAGES[lang].flag;
+                currentLangText.textContent = LANGUAGES[lang].name;
+
+                await loadTranslations(lang);
+                langDropdown.classList.add('hidden');
+                langBtn.classList.remove('active');
+            });
+        });
+
+        // 외부 클릭 시 드롭다운 닫기
+        document.addEventListener('click', () => {
+            langDropdown.classList.add('hidden');
+            langBtn.classList.remove('active');
+        });
+
+        // 초기 번역 로드
+        loadTranslations(currentLang);
+    }
+
+    initLanguageSelector();
 
     // 사용 횟수 및 API 키 관리
     function getUsageCount() {
@@ -426,4 +520,22 @@ ${userInfoText}
 
     // 초기화
     updateUsageDisplay();
+
+    // 방문자 카운터 로드
+    async function loadVisitorCount() {
+        try {
+            const response = await fetch('/api/visitor');
+            const result = await response.json();
+            if (result.success) {
+                const visitorCountEl = document.getElementById('visitor-count');
+                if (visitorCountEl) {
+                    visitorCountEl.textContent = `총 방문자: ${result.count.toLocaleString()}명`;
+                }
+            }
+        } catch (error) {
+            console.error('방문자 카운터 로드 실패:', error);
+        }
+    }
+
+    loadVisitorCount();
 });

@@ -12,6 +12,38 @@ const API_KEYS = {
 
 const PORT = 3000;
 
+// 방문자 카운터 파일 경로
+const VISITORS_FILE = path.join(__dirname, 'visitors.json');
+
+// 방문자 수 읽기
+function getVisitorCount() {
+    try {
+        if (fs.existsSync(VISITORS_FILE)) {
+            const data = fs.readFileSync(VISITORS_FILE, 'utf8');
+            return JSON.parse(data).count || 0;
+        }
+    } catch (e) {
+        console.error('방문자 파일 읽기 오류:', e);
+    }
+    return 0;
+}
+
+// 방문자 수 저장
+function saveVisitorCount(count) {
+    try {
+        fs.writeFileSync(VISITORS_FILE, JSON.stringify({ count }), 'utf8');
+    } catch (e) {
+        console.error('방문자 파일 저장 오류:', e);
+    }
+}
+
+// 방문자 수 증가 및 반환
+function incrementVisitor() {
+    const count = getVisitorCount() + 1;
+    saveVisitorCount(count);
+    return count;
+}
+
 // MIME 타입
 const mimeTypes = {
     '.html': 'text/html',
@@ -134,6 +166,14 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
         res.end();
+        return;
+    }
+
+    // API 엔드포인트: 방문자 카운터
+    if (req.method === 'GET' && req.url === '/api/visitor') {
+        const count = incrementVisitor();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, count }));
         return;
     }
 

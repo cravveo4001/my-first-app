@@ -33,6 +33,74 @@ header h1 {
     opacity: 0.9;
 }
 
+/* 언어 선택기 */
+.language-selector {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.lang-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.3s;
+}
+
+.lang-btn.active .lang-arrow {
+    transform: rotate(180deg);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    min-width: 140px;
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+}
+
+.lang-option {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.lang-option:hover {
+    background: #f3f4f6;
+}
+
+header {
+    position: relative;
+}
+
 .form-section {
     background: white;
     border-radius: 16px;
@@ -561,4 +629,41 @@ header h1 {
     .api-key-inputs {
         grid-template-columns: 1fr;
     }
+}
+
+/* Footer 스타일 */
+.site-footer {
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 40px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.visitor-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.visitor-counter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.visitor-icon {
+    font-size: 1.3rem;
+}
+
+.copyright {
+    font-size: 0.85rem;
+    opacity: 0.7;
 }

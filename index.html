@@ -11,8 +11,21 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎬 AI가 추천해주는 유튜브 채널</h1>
-            <p class="subtitle">당신에게 딱 맞는 유튜브 채널을 찾아드립니다</p>
+            <div class="language-selector">
+                <button class="lang-btn" id="lang-btn">
+                    <span id="current-lang-flag">🇰🇷</span>
+                    <span id="current-lang-text">한국어</span>
+                    <span class="lang-arrow">▼</span>
+                </button>
+                <div class="lang-dropdown hidden" id="lang-dropdown">
+                    <button class="lang-option" data-lang="ko">🇰🇷 한국어</button>
+                    <button class="lang-option" data-lang="en">🇺🇸 English</button>
+                    <button class="lang-option" data-lang="ja">🇯🇵 日本語</button>
+                    <button class="lang-option" data-lang="zh">🇨🇳 中文</button>
+                </div>
+            </div>
+            <h1 data-i18n="title">🎬 AI가 추천해주는 유튜브 채널</h1>
+            <p class="subtitle" data-i18n="subtitle">당신에게 딱 맞는 유튜브 채널을 찾아드립니다</p>
         </header>
 
         <main>
@@ -63,106 +76,88 @@
             <form id="recommendation-form" class="form-section">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="age-group">연령대</label>
+                        <label for="age-group" data-i18n="ageGroup">연령대</label>
                         <select id="age-group" name="age-group">
-                            <option value="">선택 안함</option>
-                            <option value="10대">10대</option>
-                            <option value="20대">20대</option>
-                            <option value="30대">30대</option>
-                            <option value="40대">40대</option>
-                            <option value="50대 이상">50대 이상</option>
+                            <option value="" data-i18n="selectNone">선택 안함</option>
+                            <option value="10대" data-i18n="age10">10대</option>
+                            <option value="20대" data-i18n="age20">20대</option>
+                            <option value="30대" data-i18n="age30">30대</option>
+                            <option value="40대" data-i18n="age40">40대</option>
+                            <option value="50대 이상" data-i18n="age50plus">50대 이상</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="gender">성별</label>
+                        <label for="gender" data-i18n="gender">성별</label>
                         <select id="gender" name="gender">
-                            <option value="">선택 안함</option>
-                            <option value="남성">남성</option>
-                            <option value="여성">여성</option>
+                            <option value="" data-i18n="selectNone">선택 안함</option>
+                            <option value="남성" data-i18n="male">남성</option>
+                            <option value="여성" data-i18n="female">여성</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="region">지역</label>
-                        <select id="region" name="region">
-                            <option value="">선택 안함</option>
-                            <option value="서울">서울</option>
-                            <option value="경기">경기</option>
-                            <option value="인천">인천</option>
-                            <option value="부산">부산</option>
-                            <option value="대구">대구</option>
-                            <option value="광주">광주</option>
-                            <option value="대전">대전</option>
-                            <option value="울산">울산</option>
-                            <option value="세종">세종</option>
-                            <option value="강원">강원</option>
-                            <option value="충북">충북</option>
-                            <option value="충남">충남</option>
-                            <option value="전북">전북</option>
-                            <option value="전남">전남</option>
-                            <option value="경북">경북</option>
-                            <option value="경남">경남</option>
-                            <option value="제주">제주</option>
-                        </select>
+                        <label for="region" data-i18n="region">지역 (선택)</label>
+                        <input type="text" id="region" name="region" data-i18n-placeholder="regionPlaceholder"
+                            placeholder="예: 서울, New York, Tokyo...">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="category">콘텐츠 카테고리</label>
+                        <label for="category" data-i18n="category">콘텐츠 카테고리</label>
                         <select id="category" name="category">
-                            <option value="">선택 안함</option>
-                            <option value="게임">🎮 게임</option>
-                            <option value="음악">🎵 음악</option>
-                            <option value="영화/드라마">🎬 영화/드라마</option>
-                            <option value="스포츠">⚽ 스포츠</option>
-                            <option value="먹방/요리">🍳 먹방/요리</option>
-                            <option value="뷰티/패션">💄 뷰티/패션</option>
-                            <option value="여행">✈️ 여행</option>
-                            <option value="교육/학습">📚 교육/학습</option>
-                            <option value="기술/IT">💻 기술/IT</option>
-                            <option value="경제/재테크">💰 경제/재테크</option>
-                            <option value="일상/브이로그">📷 일상/브이로그</option>
-                            <option value="반려동물">🐶 반려동물</option>
-                            <option value="자동차">🚗 자동차</option>
-                            <option value="운동/헬스">💪 운동/헬스</option>
+                            <option value="" data-i18n="selectNone">선택 안함</option>
+                            <option value="게임" data-i18n="catGame">🎮 게임</option>
+                            <option value="음악" data-i18n="catMusic">🎵 음악</option>
+                            <option value="영화/드라마" data-i18n="catMovie">🎬 영화/드라마</option>
+                            <option value="스포츠" data-i18n="catSports">⚽ 스포츠</option>
+                            <option value="먹방/요리" data-i18n="catFood">🍳 먹방/요리</option>
+                            <option value="뷰티/패션" data-i18n="catBeauty">💄 뷰티/패션</option>
+                            <option value="여행" data-i18n="catTravel">✈️ 여행</option>
+                            <option value="교육/학습" data-i18n="catEducation">📚 교육/학습</option>
+                            <option value="기술/IT" data-i18n="catTech">💻 기술/IT</option>
+                            <option value="경제/재테크" data-i18n="catFinance">💰 경제/재테크</option>
+                            <option value="일상/브이로그" data-i18n="catVlog">📷 일상/브이로그</option>
+                            <option value="반려동물" data-i18n="catPet">🐶 반려동물</option>
+                            <option value="자동차" data-i18n="catCar">🚗 자동차</option>
+                            <option value="운동/헬스" data-i18n="catFitness">💪 운동/헬스</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="style">콘텐츠 스타일</label>
+                        <label for="style" data-i18n="style">콘텐츠 스타일</label>
                         <select id="style" name="style">
-                            <option value="">선택 안함</option>
-                            <option value="재미/유머">😂 재미/유머</option>
-                            <option value="정보/지식">📖 정보/지식</option>
-                            <option value="힐링/감성">🌿 힐링/감성</option>
-                            <option value="리뷰/비교">🔍 리뷰/비교</option>
-                            <option value="튜토리얼">📝 튜토리얼</option>
-                            <option value="토크/대화">💬 토크/대화</option>
-                            <option value="뉴스/시사">📰 뉴스/시사</option>
+                            <option value="" data-i18n="selectNone">선택 안함</option>
+                            <option value="재미/유머" data-i18n="styleFun">😂 재미/유머</option>
+                            <option value="정보/지식" data-i18n="styleInfo">📖 정보/지식</option>
+                            <option value="힐링/감성" data-i18n="styleHealing">🌿 힐링/감성</option>
+                            <option value="리뷰/비교" data-i18n="styleReview">🔍 리뷰/비교</option>
+                            <option value="튜토리얼" data-i18n="styleTutorial">📝 튜토리얼</option>
+                            <option value="토크/대화" data-i18n="styleTalk">💬 토크/대화</option>
+                            <option value="뉴스/시사" data-i18n="styleNews">📰 뉴스/시사</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="duration">선호 영상 길이</label>
+                        <label for="duration" data-i18n="duration">선호 영상 길이</label>
                         <select id="duration" name="duration">
-                            <option value="">선택 안함</option>
-                            <option value="쇼츠 (1분 이하)">⚡ 쇼츠 (1분 이하)</option>
-                            <option value="짧은 영상 (5분 이하)">🎯 짧은 영상 (5분 이하)</option>
-                            <option value="중간 길이 (10-20분)">📺 중간 길이 (10-20분)</option>
-                            <option value="긴 영상 (30분 이상)">🎥 긴 영상 (30분 이상)</option>
+                            <option value="" data-i18n="selectNone">선택 안함</option>
+                            <option value="쇼츠 (1분 이하)" data-i18n="durationShorts">⚡ 쇼츠 (1분 이하)</option>
+                            <option value="짧은 영상 (5분 이하)" data-i18n="durationShort">🎯 짧은 영상 (5분 이하)</option>
+                            <option value="중간 길이 (10-20분)" data-i18n="durationMedium">📺 중간 길이 (10-20분)</option>
+                            <option value="긴 영상 (30분 이상)" data-i18n="durationLong">🎥 긴 영상 (30분 이상)</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="interest">추가 관심사 / 키워드 (선택)</label>
+                    <label for="interest" data-i18n="interest">추가 관심사 / 키워드 (선택)</label>
                     <input type="text" id="interest" name="interest" placeholder="예: 부업, 자기계발, 인테리어, ASMR...">
                 </div>
 
                 <button type="submit" class="submit-btn" id="submit-btn">
-                    <span class="btn-text">채널 추천 받기</span>
+                    <span class="btn-text" data-i18n="submitBtn">채널 추천 받기</span>
                     <span class="btn-loading hidden">
                         <span class="spinner"></span>
                         추천 생성 중...
@@ -190,6 +185,14 @@
             </section>
         </main>
     </div>
+
+    <footer class="site-footer">
+        <div class="visitor-counter">
+            <span class="visitor-icon">👁</span>
+            <span id="visitor-count">총 방문자: 로딩중...</span>
+        </div>
+        <p class="copyright" data-i18n="copyright">© 2025 AI 유튜브 채널 추천</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
