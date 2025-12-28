@@ -290,16 +290,41 @@ ${userInfoText}
 추천 이유: [한 줄 설명]`;
     }
 
-    // AI API 직접 호출 (브라우저에서)
-    async function callAPI(aiType, prompt) {
+    // AI API 호출 (사용자 키 또는 서버 키 사용)
+    async function callAPI(aiType, prompt, useServerKey = false) {
         const keys = getSavedApiKeys();
         const apiKey = keys[aiType];
 
+        // 서버 키 사용 (무료 사용자) - 서버 프록시를 통해 호출
+        if (useServerKey && !apiKey) {
+            const response = await fetch('/api/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    aiType: aiType,
+                    prompt: prompt,
+                    userApiKey: null,
+                    useServerKey: true
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || `${aiType} API 오류`);
+            }
+
+            return data.data;
+        }
+
+        // 사용자 키가 없고 서버 키도 사용 안하면 에러
         if (!apiKey) {
             throw new Error('API 키가 필요합니다. API 키 설정에서 키를 입력해주세요.');
         }
 
-        // 브라우저에서 직접 AI API 호출
+        // 브라우저에서 직접 AI API 호출 (사용자 키 사용)
         if (aiType === 'gemini') {
             return await callGeminiDirect(prompt, apiKey);
         } else if (aiType === 'chatgpt') {
@@ -540,7 +565,7 @@ ${userInfoText}
         // Gemini 호출
         if (canUseGemini) {
             promises.push(
-                callAPI('gemini', prompt)
+                callAPI('gemini', prompt, usingFreeQuota && !keys.gemini)
                     .then(response => {
                         const recommendations = parseAIResponse(response);
                         geminiResult.innerHTML = createResultHTML(recommendations);
@@ -555,7 +580,7 @@ ${userInfoText}
         // ChatGPT 호출
         if (canUseChatGPT) {
             promises.push(
-                callAPI('chatgpt', prompt)
+                callAPI('chatgpt', prompt, false)
                     .then(response => {
                         const recommendations = parseAIResponse(response);
                         chatgptResult.innerHTML = createResultHTML(recommendations);
@@ -570,7 +595,7 @@ ${userInfoText}
         // Claude 호출
         if (canUseClaude) {
             promises.push(
-                callAPI('claude', prompt)
+                callAPI('claude', prompt, false)
                     .then(response => {
                         const recommendations = parseAIResponse(response);
                         claudeResult.innerHTML = createResultHTML(recommendations);
