@@ -290,34 +290,84 @@ ${userInfoText}
 추천 이유: [한 줄 설명]`;
     }
 
-    // 서버 API 호출
+    // AI API 직접 호출 (브라우저에서)
     async function callAPI(aiType, prompt) {
         const keys = getSavedApiKeys();
-        const usingFreeQuota = isUsingFreeQuota();
+        const apiKey = keys[aiType];
 
-        // API 키 결정: 사용자 키가 있으면 사용자 키, 없으면 서버 기본 키
-        const apiKey = keys[aiType] || null;
+        if (!apiKey) {
+            throw new Error('API 키가 필요합니다. API 키 설정에서 키를 입력해주세요.');
+        }
 
-        const response = await fetch('/api/recommend', {
+        // 브라우저에서 직접 AI API 호출
+        if (aiType === 'gemini') {
+            return await callGeminiDirect(prompt, apiKey);
+        } else if (aiType === 'chatgpt') {
+            return await callChatGPTDirect(prompt, apiKey);
+        } else if (aiType === 'claude') {
+            return await callClaudeDirect(prompt, apiKey);
+        } else {
+            throw new Error('알 수 없는 AI 타입');
+        }
+    }
+
+    // Gemini API 직접 호출
+    async function callGeminiDirect(prompt, apiKey) {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error.message || 'Gemini API 오류');
+        }
+
+        return data.candidates[0].content.parts[0].text;
+    }
+
+    // ChatGPT API 직접 호출
+    async function callChatGPTDirect(prompt, apiKey) {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                aiType,
-                prompt,
-                userApiKey: apiKey,
-                useServerKey: usingFreeQuota && !apiKey
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'user', content: prompt }],
+                max_tokens: 1000,
+                temperature: 0.7
             })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (!result.success) {
-            throw new Error(result.error);
+        if (data.error) {
+            throw new Error(data.error.message || 'ChatGPT API 오류');
         }
 
-        return result.data;
+        return data.choices[0].message.content;
+    }
+
+    // Claude API 직접 호출 (CORS 문제로 프록시 필요 - 대체 메시지 표시)
+    async function callClaudeDirect(prompt, apiKey) {
+        // Claude API는 브라우저에서 직접 호출 시 CORS 문제가 있음
+        throw new Error('Claude API는 브라우저에서 직접 호출할 수 없습니다. 서버 배포가 필요합니다.');
     }
 
     // AI 응답 파싱
