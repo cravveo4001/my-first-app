@@ -1,5 +1,5 @@
 // Vercel Serverless Function for AI recommendations
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // CORS 헤더 설정
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         console.error('API Error:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
-}
+};
 
 // Gemini API 호출
 async function callGeminiAPI(prompt, apiKey) {
