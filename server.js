@@ -7,7 +7,8 @@ require('dotenv').config();
 // API 키 설정 (환경 변수에서 읽기)
 const API_KEYS = {
     gemini: process.env.GEMINI_API_KEY || '',
-    chatgpt: process.env.CHATGPT_API_KEY || ''
+    chatgpt: process.env.CHATGPT_API_KEY || '',
+    claude: process.env.ANTHROPIC_API_KEY || ''
 };
 
 const PORT = 3000;
@@ -140,6 +141,50 @@ function callChatGPTAPI(prompt) {
     });
 }
 
+// Claude API 호출
+function callClaudeAPI(prompt) {
+    return new Promise((resolve, reject) => {
+        const postData = JSON.stringify({
+            model: 'claude-3-5-sonnet-20241022',
+            max_tokens: 1024,
+            messages: [{ role: 'user', content: prompt }]
+        });
+
+        const options = {
+            hostname: 'api.anthropic.com',
+            path: '/v1/messages',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEYS.claude,
+                'anthropic-version': '2023-06-01',
+                'Content-Length': Buffer.byteLength(postData)
+            }
+        };
+
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                try {
+                    const json = JSON.parse(data);
+                    if (json.error) {
+                        reject(new Error(json.error.message));
+                    } else {
+                        resolve(json.content[0].text);
+                    }
+                } catch (e) {
+                    reject(new Error('Claude API 응답 파싱 실패'));
+                }
+            });
+        });
+
+        req.on('error', reject);
+        req.write(postData);
+        req.end();
+    });
+}
+
 // 정적 파일 제공
 function serveStaticFile(res, filePath) {
     const ext = path.extname(filePath);
@@ -190,6 +235,8 @@ const server = http.createServer(async (req, res) => {
                     result = await callGeminiAPI(prompt);
                 } else if (aiType === 'chatgpt') {
                     result = await callChatGPTAPI(prompt);
+                } else if (aiType === 'claude') {
+                    result = await callClaudeAPI(prompt);
                 } else {
                     throw new Error('알 수 없는 AI 타입');
                 }
