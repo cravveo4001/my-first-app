@@ -364,10 +364,29 @@ ${userInfoText}
         return data.choices[0].message.content;
     }
 
-    // Claude API 직접 호출 (CORS 문제로 프록시 필요 - 대체 메시지 표시)
+    // Claude API 호출 (서버 프록시 사용 - CORS 우회)
     async function callClaudeDirect(prompt, apiKey) {
-        // Claude API는 브라우저에서 직접 호출 시 CORS 문제가 있음
-        throw new Error('Claude API는 브라우저에서 직접 호출할 수 없습니다. 서버 배포가 필요합니다.');
+        // Claude API는 CORS 문제로 서버를 통해 호출
+        const response = await fetch('/api/recommend', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                aiType: 'claude',
+                prompt: prompt,
+                userApiKey: apiKey,
+                useServerKey: false
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || 'Claude API 오류');
+        }
+
+        return data.data;
     }
 
     // AI 응답 파싱
