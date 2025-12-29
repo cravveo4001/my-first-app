@@ -47,19 +47,35 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <div id="google_translate_element" style="position:absolute;top:10px;right:10px;"></div>
-            <h1>🎬 3개 AI가 분석하는 맞춤 유튜브 채널</h1>
-            <p class="subtitle">Gemini, ChatGPT, Claude가 당신의 취향을 분석하여 최적의 채널을 추천합니다</p>
+    <!-- 고정 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🎬 AI 유튜브 채널 추천</a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link active">홈</a>
+                <a href="/about.html" class="nav-link">소개</a>
+                <a href="#faq-section" class="nav-link">FAQ</a>
+                <a href="/privacy.html" class="nav-link">개인정보처리방침</a>
+            </div>
+            <div id="google_translate_element" class="nav-translate"></div>
+        </div>
+    </nav>
 
-            <!-- AI 기술 배지 (클릭 시 공식 사이트로 이동) -->
+    <!-- 히어로 섹션 -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>🎬 3개 AI가 분석하는 맞춤 유튜브 채널</h1>
+            <p class="hero-subtitle">Gemini, ChatGPT, Claude가 당신의 취향을 분석하여 최적의 채널을 추천합니다</p>
             <div class="tech-badges">
                 <a href="https://gemini.google.com/" target="_blank" class="tech-badge gemini">🤖 Gemini</a>
                 <a href="https://chat.openai.com/" target="_blank" class="tech-badge chatgpt">💬 ChatGPT</a>
                 <a href="https://claude.ai/" target="_blank" class="tech-badge claude">🧠 Claude</a>
             </div>
-        </header>
+        </div>
+    </section>
+
+    <!-- 메인 콘텐츠 래퍼 -->
+    <div class="main-wrapper">
 
         <!-- 특징 섹션 (클릭 시 폼으로 스크롤) -->
         <section class="features-section">
@@ -243,7 +259,7 @@
                 </div>
             </section>
         </main>
-    </div>
+    </div> <!-- main-wrapper 끝 -->
 
     <!-- SEO 소개 섹션 -->
     <section class="seo-section">
