@@ -49,21 +49,9 @@
 <body>
     <div class="container">
         <header>
-            <div class="language-selector">
-                <button class="lang-btn" id="lang-btn">
-                    <span id="current-lang-flag">🇰🇷</span>
-                    <span id="current-lang-text">한국어</span>
-                    <span class="lang-arrow">▼</span>
-                </button>
-                <div class="lang-dropdown hidden" id="lang-dropdown">
-                    <button class="lang-option" data-lang="ko">🇰🇷 한국어</button>
-                    <button class="lang-option" data-lang="en">🇺🇸 English</button>
-                    <button class="lang-option" data-lang="ja">🇯🇵 日本語</button>
-                    <button class="lang-option" data-lang="zh">🇨🇳 中文</button>
-                </div>
-            </div>
-            <h1 data-i18n="title">🎬 3개 AI가 분석하는 맞춤 유튜브 채널</h1>
-            <p class="subtitle" data-i18n="subtitle">Gemini, ChatGPT, Claude가 당신의 취향을 분석하여 최적의 채널을 추천합니다</p>
+            <div id="google_translate_element" style="position:absolute;top:10px;right:10px;"></div>
+            <h1>🎬 3개 AI가 분석하는 맞춤 유튜브 채널</h1>
+            <p class="subtitle">Gemini, ChatGPT, Claude가 당신의 취향을 분석하여 최적의 채널을 추천합니다</p>
 
             <!-- AI 기술 배지 (클릭 시 공식 사이트로 이동) -->
             <div class="tech-badges">
@@ -368,6 +356,20 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <!-- Google Translate Widget -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'ko',
+                includedLanguages: 'ko,en,ja,zh-CN',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>
