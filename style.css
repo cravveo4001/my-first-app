@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
 }
 
@@ -16,8 +16,9 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     padding: 0 20px;
 }
@@ -44,7 +45,7 @@ body {
 }
 
 .nav-link {
-    color: #666;
+    color: #555;
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
@@ -62,8 +63,7 @@ body {
 
 /* 히어로 섹션 */
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 100px 20px 60px;
+    padding: 120px 20px 60px;
     text-align: center;
     margin-top: 60px;
     /* navbar 높이 */
@@ -91,7 +91,7 @@ body {
 
 /* 메인 콘텐츠 래퍼 */
 .main-wrapper {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 40px 20px;
 }
@@ -183,20 +183,20 @@ header h1 {
 }
 
 .feature-card {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 25px 20px;
     text-align: center;
-    color: #333;
+    color: white;
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .feature-icon {
@@ -208,12 +208,12 @@ header h1 {
 .feature-card h3 {
     font-size: 1.1rem;
     margin-bottom: 10px;
-    color: #333;
+    color: white;
 }
 
 .feature-card p {
     font-size: 0.85rem;
-    color: #666;
+    opacity: 0.9;
     line-height: 1.5;
 }
 
