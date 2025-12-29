@@ -55,10 +55,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 번역 적용
     function applyTranslations() {
+        // 텍스트 콘텐츠 번역
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (translations[key]) {
                 el.textContent = translations[key];
+            }
+        });
+
+        // HTML 콘텐츠 번역 (strong 태그 등 포함)
+        document.querySelectorAll('[data-i18n-html]').forEach(el => {
+            const key = el.getAttribute('data-i18n-html');
+            if (translations[key]) {
+                el.innerHTML = translations[key];
             }
         });
 

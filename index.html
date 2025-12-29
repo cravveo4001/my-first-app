@@ -100,9 +100,9 @@
             <div class="usage-info-section">
                 <div class="usage-badge" id="usage-badge">
                     <span class="usage-icon">🎁</span>
-                    <span id="usage-text">무료 사용 가능: 3회 남음</span>
+                    <span id="usage-text" data-i18n="usageFree">무료 사용 가능: 3회 남음</span>
                 </div>
-                <button type="button" class="api-settings-btn" id="api-settings-btn">
+                <button type="button" class="api-settings-btn" id="api-settings-btn" data-i18n="apiSettingsBtn">
                     ⚙️ API 키 설정
                 </button>
             </div>
@@ -110,32 +110,36 @@
             <!-- API 키 설정 패널 -->
             <div id="api-settings-panel" class="api-settings-panel hidden">
                 <div class="api-settings-header">
-                    <h3>🔑 나만의 API 키 설정</h3>
-                    <p class="api-settings-desc">무료는 <strong>Gemini만</strong> 제공됩니다. ChatGPT, Claude를 사용하려면 본인의 API 키를
-                        입력하세요.</p>
-                    <p class="api-settings-note">💡 API 키는 <strong>이 브라우저에만</strong> 저장되며, 서버로 전송되지 않습니다.</p>
+                    <h3 data-i18n="apiSettingsTitle">🔑 나만의 API 키 설정</h3>
+                    <p class="api-settings-desc" data-i18n="apiSettingsDesc">무료는 Gemini만 제공됩니다. ChatGPT, Claude를 사용하려면
+                        본인의 API 키를 입력하세요.</p>
+                    <p class="api-settings-note" data-i18n="apiSettingsNote">💡 API 키는 이 브라우저에만 저장되며, 서버로 전송되지 않습니다.</p>
                 </div>
                 <div class="api-key-inputs">
                     <div class="api-key-group">
                         <label for="gemini-api-key">Gemini API Key</label>
                         <input type="password" id="gemini-api-key" placeholder="AIza로 시작하는 키">
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-link">키 발급받기 →</a>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-link"
+                            data-i18n="apiGetKey">키 발급받기 →</a>
                     </div>
                     <div class="api-key-group">
                         <label for="chatgpt-api-key">ChatGPT API Key</label>
                         <input type="password" id="chatgpt-api-key" placeholder="sk-로 시작하는 키">
-                        <a href="https://platform.openai.com/api-keys" target="_blank" class="api-link">키 발급받기 →</a>
+                        <a href="https://platform.openai.com/api-keys" target="_blank" class="api-link"
+                            data-i18n="apiGetKey">키 발급받기 →</a>
                     </div>
                     <div class="api-key-group">
                         <label for="claude-api-key">Claude API Key</label>
                         <input type="password" id="claude-api-key" placeholder="sk-ant-로 시작하는 키">
-                        <a href="https://console.anthropic.com/settings/keys" target="_blank" class="api-link">키 발급받기
-                            →</a>
+                        <a href="https://console.anthropic.com/settings/keys" target="_blank" class="api-link"
+                            data-i18n="apiGetKey">키 발급받기 →</a>
                     </div>
                 </div>
                 <div class="api-key-actions">
-                    <button type="button" id="save-api-keys" class="save-keys-btn">💾 브라우저에 저장</button>
-                    <button type="button" id="clear-api-keys" class="clear-keys-btn">🗑️ 키 초기화</button>
+                    <button type="button" id="save-api-keys" class="save-keys-btn" data-i18n="apiSaveBtn">💾 브라우저에
+                        저장</button>
+                    <button type="button" id="clear-api-keys" class="clear-keys-btn" data-i18n="apiClearBtn">🗑️ 키
+                        초기화</button>
                 </div>
             </div>
 
@@ -234,7 +238,7 @@
 
 
             <section id="result-section" class="result-section hidden">
-                <h2>📺 추천 채널 목록</h2>
+                <h2 data-i18n="resultTitle">📺 추천 채널 목록</h2>
                 <div class="result-grid">
                     <div class="result-column">
                         <div class="ai-header gemini">🤖 Gemini (Google)</div>
@@ -256,25 +260,23 @@
     <!-- SEO 소개 섹션 -->
     <section class="seo-section">
         <div class="seo-container">
-            <h2>🎯 AI 유튜브 채널 추천 서비스란?</h2>
+            <h2 data-i18n="seoTitle">🎯 AI 유튜브 채널 추천 서비스란?</h2>
             <div class="seo-content">
-                <p>
+                <p data-i18n-html="seoP1">
                     <strong>AI 유튜브 채널 추천</strong>은 세계 최고의 AI 기술인 <strong>Google Gemini</strong>, <strong>OpenAI
-                        ChatGPT</strong>, <strong>Anthropic Claude</strong>를
-                    활용하여 사용자에게 최적의 유튜브 채널을 추천하는 무료 웹 서비스입니다.
+                        ChatGPT</strong>, <strong>Anthropic Claude</strong>를 활용하여 사용자에게 최적의 유튜브 채널을 추천하는 무료 웹 서비스입니다.
                 </p>
-                <p>
-                    기존의 유튜브 알고리즘은 시청 기록에만 의존하지만, 저희 서비스는 <strong>연령대, 성별, 지역, 콘텐츠 카테고리, 스타일, 영상 길이</strong> 등
-                    다양한 요소를 종합적으로 분석하여 진정으로 당신에게 맞는 채널을 찾아드립니다.
+                <p data-i18n-html="seoP2">
+                    기존의 유튜브 알고리즘은 시청 기록에만 의존하지만, 저희 서비스는 <strong>연령대, 성별, 지역, 콘텐츠 카테고리, 스타일, 영상 길이</strong> 등 다양한 요소를
+                    종합적으로 분석하여 진정으로 당신에게 맞는 채널을 찾아드립니다.
                 </p>
-                <p>
-                    3개의 서로 다른 AI 엔진이 동시에 분석하기 때문에, 한 가지 관점이 아닌 <strong>다양한 시각의 추천</strong>을 받을 수 있습니다.
-                    게임, 음악, 교육, 요리, 여행, IT/기술, 재테크 등 14개 이상의 카테고리와 7가지 콘텐츠 스타일을 지원하며,
-                    쇼츠부터 긴 영상까지 선호하는 영상 길이도 선택할 수 있습니다.
+                <p data-i18n-html="seoP3">
+                    3개의 서로 다른 AI 엔진이 동시에 분석하기 때문에, 한 가지 관점이 아닌 <strong>다양한 시각의 추천</strong>을 받을 수 있습니다. 게임, 음악, 교육, 요리,
+                    여행, IT/기술, 재테크 등 14개 이상의 카테고리와 7가지 콘텐츠 스타일을 지원하며, 쇼츠부터 긴 영상까지 선호하는 영상 길이도 선택할 수 있습니다.
                 </p>
-                <p>
-                    <strong>개인정보 보호</strong>를 최우선으로 생각하여, 입력하신 정보는 서버에 저장되지 않으며 추천 완료 후 즉시 삭제됩니다.
-                    무료로 제공되는 이 서비스를 통해 새로운 유튜브 채널을 발견하고, 더 풍요로운 콘텐츠 생활을 시작해보세요!
+                <p data-i18n-html="seoP4">
+                    <strong>개인정보 보호</strong>를 최우선으로 생각하여, 입력하신 정보는 서버에 저장되지 않으며 추천 완료 후 즉시 삭제됩니다. 무료로 제공되는 이 서비스를 통해 새로운
+                    유튜브 채널을 발견하고, 더 풍요로운 콘텐츠 생활을 시작해보세요!
                 </p>
             </div>
         </div>
@@ -283,69 +285,70 @@
     <!-- FAQ 섹션 -->
     <section class="faq-section">
         <div class="faq-container">
-            <h2>❓ 자주 묻는 질문 (FAQ)</h2>
+            <h2 data-i18n="faqTitle">❓ 자주 묻는 질문 (FAQ)</h2>
 
             <div class="faq-item">
-                <button class="faq-question">AI 유튜브 채널 추천 서비스는 무료인가요?</button>
+                <button class="faq-question" data-i18n="faq1Q">AI 유튜브 채널 추천 서비스는 무료인가요?</button>
                 <div class="faq-answer">
-                    <p>네, 완전히 무료입니다. 무료 사용 시 하루 3회까지 Gemini AI를 통한 추천을 받을 수 있습니다. ChatGPT나 Claude를 사용하시려면 본인의 API 키를
-                        입력하시면 무제한으로 이용 가능합니다.</p>
+                    <p data-i18n="faq1A">네, 완전히 무료입니다. 무료 사용 시 하루 3회까지 Gemini AI를 통한 추천을 받을 수 있습니다. ChatGPT나 Claude를
+                        사용하시려면 본인의 API 키를 입력하시면 무제한으로 이용 가능합니다.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">Gemini, ChatGPT, Claude의 차이점은 무엇인가요?</button>
+                <button class="faq-question" data-i18n="faq2Q">Gemini, ChatGPT, Claude의 차이점은 무엇인가요?</button>
                 <div class="faq-answer">
-                    <p>세 AI는 각각 다른 회사(Google, OpenAI, Anthropic)에서 개발한 대규모 언어 모델입니다. 각 AI는 학습 데이터와 알고리즘이 달라 같은 질문에도 다른
-                        관점의 추천을 제공합니다. 여러 AI의 추천을 비교해보시면 더 다양한 채널을 발견할 수 있습니다.</p>
+                    <p data-i18n="faq2A">세 AI는 각각 다른 회사(Google, OpenAI, Anthropic)에서 개발한 대규모 언어 모델입니다. 각 AI는 학습 데이터와
+                        알고리즘이 달라 같은 질문에도 다른 관점의 추천을 제공합니다. 여러 AI의 추천을 비교해보시면 더 다양한 채널을 발견할 수 있습니다.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">내 개인정보는 안전한가요?</button>
+                <button class="faq-question" data-i18n="faq3Q">내 개인정보는 안전한가요?</button>
                 <div class="faq-answer">
-                    <p>입력하신 연령, 성별, 관심사 등의 정보는 AI 추천을 생성하는 데만 사용되며, 서버에 저장되지 않습니다. 추천이 완료되면 모든 데이터는 즉시 삭제됩니다. API 키를
-                        입력하셨다면 브라우저의 로컬 스토리지에만 저장되어 서버로 전송되지 않습니다.</p>
+                    <p data-i18n="faq3A">입력하신 연령, 성별, 관심사 등의 정보는 AI 추천을 생성하는 데만 사용되며, 서버에 저장되지 않습니다. 추천이 완료되면 모든 데이터는 즉시
+                        삭제됩니다. API 키를 입력하셨다면 브라우저의 로컬 스토리지에만 저장되어 서버로 전송되지 않습니다.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">유튜브 알고리즘과 어떻게 다른가요?</button>
+                <button class="faq-question" data-i18n="faq4Q">유튜브 알고리즘과 어떻게 다른가요?</button>
                 <div class="faq-answer">
-                    <p>유튜브 알고리즘은 시청 기록 기반으로 추천하지만, 저희 서비스는 사용자가 직접 입력한 취향과 선호도를 기반으로 추천합니다. 새로운 분야의 채널을 찾거나, 기존 알고리즘의 필터
-                        버블에서 벗어나고 싶을 때 유용합니다.</p>
+                    <p data-i18n="faq4A">유튜브 알고리즘은 시청 기록 기반으로 추천하지만, 저희 서비스는 사용자가 직접 입력한 취향과 선호도를 기반으로 추천합니다. 새로운 분야의
+                        채널을 찾거나, 기존 알고리즘의 필터 버블에서 벗어나고 싶을 때 유용합니다.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">추천 결과가 마음에 들지 않으면 어떻게 하나요?</button>
+                <button class="faq-question" data-i18n="faq5Q">추천 결과가 마음에 들지 않으면 어떻게 하나요?</button>
                 <div class="faq-answer">
-                    <p>입력 정보를 더 구체적으로 수정하시거나, '추가 관심사' 필드에 더 자세한 키워드를 입력해보세요. 또한 다른 AI 엔진으로 다시 추천받으시면 다른 관점의 결과를 얻을 수
-                        있습니다.</p>
+                    <p data-i18n="faq5A">입력 정보를 더 구체적으로 수정하시거나, '추가 관심사' 필드에 더 자세한 키워드를 입력해보세요. 또한 다른 AI 엔진으로 다시 추천받으시면
+                        다른 관점의 결과를 얻을 수 있습니다.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">모바일에서도 사용할 수 있나요?</button>
+                <button class="faq-question" data-i18n="faq6Q">모바일에서도 사용할 수 있나요?</button>
                 <div class="faq-answer">
-                    <p>네, 반응형 웹으로 제작되어 스마트폰, 태블릿, PC 등 모든 기기에서 이용 가능합니다. 별도 앱 설치 없이 웹 브라우저로 접속하시면 됩니다.</p>
+                    <p data-i18n="faq6A">네, 반응형 웹으로 제작되어 스마트폰, 태블릿, PC 등 모든 기기에서 이용 가능합니다. 별도 앱 설치 없이 웹 브라우저로 접속하시면 됩니다.
+                    </p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">API 키는 어디서 발급받나요?</button>
+                <button class="faq-question" data-i18n="faq7Q">API 키는 어디서 발급받나요?</button>
                 <div class="faq-answer">
-                    <p>Gemini API 키는 Google AI Studio(aistudio.google.com)에서, ChatGPT API 키는 OpenAI
+                    <p data-i18n="faq7A">Gemini API 키는 Google AI Studio(aistudio.google.com)에서, ChatGPT API 키는 OpenAI
                         플랫폼(platform.openai.com)에서, Claude API 키는 Anthropic Console(console.anthropic.com)에서 발급받을 수
                         있습니다. API 키 설정 버튼을 클릭하시면 각 사이트 링크도 제공됩니다.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question">어떤 언어를 지원하나요?</button>
+                <button class="faq-question" data-i18n="faq8Q">어떤 언어를 지원하나요?</button>
                 <div class="faq-answer">
-                    <p>현재 한국어, 영어, 일본어, 중국어(간체) 4개 언어를 지원합니다. 페이지 우측 상단의 언어 선택 버튼으로 변경할 수 있습니다. 추천 결과도 선택한 언어에 맞게 제공됩니다.
-                    </p>
+                    <p data-i18n="faq8A">현재 한국어, 영어, 일본어, 중국어 4개 언어를 지원합니다. 페이지 우측 상단의 언어 선택 버튼으로 변경할 수 있습니다. 추천 결과도 선택한
+                        언어에 맞게 제공됩니다.</p>
                 </div>
             </div>
         </div>
@@ -353,9 +356,9 @@
 
     <footer class="site-footer">
         <div class="footer-nav">
-            <a href="/about.html">서비스 소개</a>
-            <a href="/privacy.html">개인정보처리방침</a>
-            <a href="/terms.html">이용약관</a>
+            <a href="/about.html" data-i18n="footerAbout">서비스 소개</a>
+            <a href="/privacy.html" data-i18n="footerPrivacy">개인정보처리방침</a>
+            <a href="/terms.html" data-i18n="footerTerms">이용약관</a>
         </div>
         <div class="visitor-counter">
             <span class="visitor-icon">👁</span>
