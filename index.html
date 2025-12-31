@@ -62,6 +62,7 @@
                 <a href="/" class="nav-link active">홈</a>
                 <a href="/about.html" class="nav-link">소개</a>
                 <a href="#faq-section" class="nav-link">FAQ</a>
+                <button type="button" class="nav-link nav-btn" id="contact-btn">📞 문의하기</button>
                 <button type="button" class="nav-link nav-btn" id="favorites-btn">⭐ 즐겨찾기</button>
                 <button type="button" class="nav-link nav-btn" id="history-btn">📜 히스토리</button>
             </div>
@@ -151,6 +152,12 @@
                         <input type="password" id="youtube-api-key" placeholder="AIza로 시작하는 키">
                         <a href="https://console.cloud.google.com/apis/credentials" target="_blank" class="api-link">키
                             발급받기 →</a>
+                    </div>
+                    <div class="api-key-group contact-url">
+                        <label for="formspree-url">문의 폼 수신용 URL (Formspree)</label>
+                        <input type="password" id="formspree-url" placeholder="https://formspree.io/f/..."
+                            style="font-family: monospace;">
+                        <a href="https://formspree.io/" target="_blank" class="api-link">URL 발급받기 →</a>
                     </div>
                 </div>
                 <div class="api-key-actions">
@@ -434,6 +441,42 @@
                 <button type="button" class="copy-result-btn" id="share-copy">
                     📋 결과 텍스트 복사하기
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 문의하기 모달 -->
+    <div id="contact-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📞 문의하기</h3>
+                <button type="button" class="modal-close" data-modal="contact-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">
+                    버그 제보, 기능 제안, 기타 문의사항을 남겨주세요.<br>
+                    작성하신 내용은 개발자(관리자)에게 이메일로 전송됩니다.
+                </p>
+                <form id="contact-form" action="https://formspree.io/f/mqakpeag" method="POST">
+                    <div class="form-group">
+                        <label for="contact-email">이메일 (답변 받으실 분)</label>
+                        <input type="email" id="contact-email" name="email" placeholder="name@example.com" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">문의 내용</label>
+                        <textarea id="contact-message" name="message" rows="5" placeholder="문의하실 내용을 자유롭게 적어주세요."
+                            required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; resize: vertical;"></textarea>
+                    </div>
+                    <!-- 자동 스팸 방지 (Honeypot) -->
+                    <input type="text" name="_gotcha" style="display:none">
+
+                    <button type="submit" class="submit-btn"
+                        style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">전송하기</button>
+                    <p id="contact-status"
+                        style="margin-top: 10px; font-size: 0.8rem; text-align: center; color: #666;"></p>
+                </form>
             </div>
         </div>
     </div>

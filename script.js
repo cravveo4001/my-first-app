@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         chatgptKey: 'youtube_recommender_chatgpt_key',
         claudeKey: 'youtube_recommender_claude_key',
         youtubeKey: 'youtube_recommender_youtube_key',
+        formspreeUrl: 'youtube_recommender_formspree_url', // 추가
         language: 'youtube_recommender_language'
     };
 
@@ -51,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
             gemini: localStorage.getItem(STORAGE_KEYS.geminiKey) || '',
             chatgpt: localStorage.getItem(STORAGE_KEYS.chatgptKey) || '',
             claude: localStorage.getItem(STORAGE_KEYS.claudeKey) || '',
-            youtube: localStorage.getItem(STORAGE_KEYS.youtubeKey) || ''
+            youtube: localStorage.getItem(STORAGE_KEYS.youtubeKey) || '',
+            formspree: localStorage.getItem(STORAGE_KEYS.formspreeUrl) || '' // 추가
         };
     }
 
@@ -145,7 +147,8 @@ document.addEventListener('DOMContentLoaded', function () {
             gemini: geminiApiKeyInput.value.trim(),
             chatgpt: chatgptApiKeyInput.value.trim(),
             claude: claudeApiKeyInput.value.trim(),
-            youtube: youtubeApiKeyInput ? youtubeApiKeyInput.value.trim() : ''
+            youtube: youtubeApiKeyInput ? youtubeApiKeyInput.value.trim() : '',
+            formspree: document.getElementById('formspree-url') ? document.getElementById('formspree-url').value.trim() : '' // 추가
         };
 
         // 빈 값은 기존 키 유지
@@ -154,16 +157,24 @@ document.addEventListener('DOMContentLoaded', function () {
             gemini: newKeys.gemini || existingKeys.gemini,
             chatgpt: newKeys.chatgpt || existingKeys.chatgpt,
             claude: newKeys.claude || existingKeys.claude,
-            youtube: newKeys.youtube || existingKeys.youtube
+            youtube: newKeys.youtube || existingKeys.youtube,
+            formspree: newKeys.formspree || existingKeys.formspree // 추가
         };
 
         saveApiKeys(keysToSave);
+
+        // Formspree URL 저장 (별도 키)
+        if (keysToSave.formspree && !keysToSave.formspree.startsWith('http')) {
+            // URL 형식이 아니면 경고? (일단 저장)
+        }
+        if (keysToSave.formspree) localStorage.setItem(STORAGE_KEYS.formspreeUrl, keysToSave.formspree);
 
         // 입력 필드 클리어
         geminiApiKeyInput.value = '';
         chatgptApiKeyInput.value = '';
         claudeApiKeyInput.value = '';
         if (youtubeApiKeyInput) youtubeApiKeyInput.value = '';
+        if (document.getElementById('formspree-url')) document.getElementById('formspree-url').value = ''; // 추가
 
         updateUsageDisplay();
         alert('✅ API 키가 저장되었습니다!');
@@ -1191,5 +1202,99 @@ ${userInfoText}
     // 전역 함수로 등록
     window.searchYouTubeChannels = searchYouTubeChannels;
     window.addYouTubeChannelsToResult = addYouTubeChannelsToResult;
+
+    // --- 문의하기 (Contact Us) 기능 ---
+    const contactBtn = document.getElementById('contact-btn');
+    const contactModal = document.getElementById('contact-modal');
+    const contactForm = document.getElementById('contact-form');
+    const formspreeInput = document.getElementById('formspree-url');
+
+    // 초기 로딩 시 저장된 Formspree URL 표시 (Settings UI)
+    const savedFormspree = localStorage.getItem(STORAGE_KEYS.formspreeUrl);
+    if (savedFormspree && formspreeInput) {
+        formspreeInput.value = savedFormspree; // 보안 민감 정보 아니므로 그대로 표시하거나 마스킹 선택
+        // 여기선 사용자 편의를 위해 그대로 표시하거나, 다른 키처럼 비워두기
+        formspreeInput.placeholder = '저장된 URL이 있습니다 (보안상 숨김)';
+        formspreeInput.value = '';
+    }
+
+    if (contactBtn && contactModal) {
+        contactBtn.addEventListener('click', () => {
+            contactModal.classList.remove('hidden');
+        });
+
+        // 모달 닫기
+        contactModal.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => contactModal.classList.add('hidden'));
+        });
+
+        // 배경 클릭 닫기
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) contactModal.classList.add('hidden');
+        });
+    }
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('.submit-btn');
+            const statusMsg = document.getElementById('contact-status');
+            const savedUrl = localStorage.getItem(STORAGE_KEYS.formspreeUrl);
+
+            // 1. URL 설정 확인
+            if (!savedUrl) {
+                alert('⚠️ 문의 기능을 사용하려면 설정에서 Formspree URL을 먼저 등록해야 합니다.\n설정 창으로 이동합니다.');
+                contactModal.classList.add('hidden');
+                apiSettingsPanel.classList.remove('hidden');
+                if (formspreeInput) formspreeInput.focus();
+                return;
+            }
+
+            // 2. 전송 시작
+            submitBtn.disabled = true;
+            submitBtn.textContent = '전송 중... ⏳';
+            statusMsg.textContent = '';
+
+            // 폼 데이터 준비
+            const formData = new FormData(contactForm);
+
+            try {
+                const response = await fetch(savedUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    statusMsg.textContent = '✅ 성공적으로 전송되었습니다!';
+                    statusMsg.style.color = 'green';
+                    contactForm.reset();
+                    showToast('문의가 성공적으로 접수되었습니다! 📧');
+                    setTimeout(() => {
+                        contactModal.classList.add('hidden');
+                        statusMsg.textContent = '';
+                    }, 2000);
+                } else {
+                    const data = await response.json();
+                    if (Object.hasOwn(data, 'errors')) {
+                        statusMsg.textContent = data["errors"].map(error => error["message"]).join(", ");
+                    } else {
+                        statusMsg.textContent = '❌ 전송에 실패했습니다. 다시 시도해주세요.';
+                    }
+                    statusMsg.style.color = 'red';
+                }
+            } catch (error) {
+                statusMsg.textContent = '❌ 네트워크 오류가 발생했습니다.';
+                statusMsg.style.color = 'red';
+                console.error(error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '전송하기';
+            }
+        });
+    }
 
 });
