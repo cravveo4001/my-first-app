@@ -572,20 +572,22 @@ ${userInfoText}
             return;
         }
 
-        const cards = container.querySelectorAll('.recommendation-card');
-        console.log(`Found ${cards.length} cards`);
+        // 선택자 수정: .recommendation-card -> .result-item
+        const cards = container.querySelectorAll('.result-item');
+        console.log(`Found ${cards.length} cards (.result-item)`);
 
         for (let i = 0; i < Math.min(cards.length, 3); i++) {
             const card = cards[i];
             if (card.querySelector('.youtube-channels')) continue;
 
-            const titleEl = card.querySelector('strong');
+            // 선택자 수정: strong -> h3
+            const titleEl = card.querySelector('h3');
             if (!titleEl) {
-                console.log(`Card ${i} has no title element (strong tag)`);
+                console.log(`Card ${i} has no title element (h3)`);
                 continue;
             }
 
-            // 검색어 추출 개선: **, "주제 n:", 따옴표 등 제거
+            // 검색어 추출 개선
             let searchQuery = titleEl.textContent
                 .replace(/추천 채널 주제 \d+:/g, '')
                 .replace(/\*\*/g, '')
