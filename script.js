@@ -553,11 +553,13 @@ ${userInfoText}
             // 히스토리에 자동 저장
             window.saveToHistoryAuto && window.saveToHistoryAuto(window.currentRecommendations);
 
-            // YouTube API로 실제 채널 검색 (Gemini 결과에 추가)
+            // 모든 AI 결과에 대해 YouTube API로 실제 채널 검색
             const keys = getSavedApiKeys();
-            if (keys.youtube && geminiResult) {
+            if (keys.youtube) {
                 setTimeout(() => {
-                    addYouTubeChannelsToCards(geminiResult, userInfo.category);
+                    if (geminiResult && allResults.gemini) addYouTubeChannelsToCards(geminiResult, userInfo.category);
+                    if (chatgptResult && allResults.chatgpt) addYouTubeChannelsToCards(chatgptResult, userInfo.category);
+                    if (claudeResult && allResults.claude) addYouTubeChannelsToCards(claudeResult, userInfo.category);
                 }, 500);
             }
         }
@@ -565,27 +567,19 @@ ${userInfoText}
 
     // 추천 카드에 YouTube 채널 추가
     async function addYouTubeChannelsToCards(container, category) {
-        console.log('addYouTubeChannelsToCards called');
+        // console.log('addYouTubeChannelsToCards called');
         const keys = getSavedApiKeys();
-        if (!keys.youtube) {
-            console.log('No YouTube API key found');
-            return;
-        }
+        if (!keys.youtube) return;
 
         // 선택자 수정: .recommendation-card -> .result-item
         const cards = container.querySelectorAll('.result-item');
-        console.log(`Found ${cards.length} cards (.result-item)`);
 
         for (let i = 0; i < Math.min(cards.length, 3); i++) {
             const card = cards[i];
             if (card.querySelector('.youtube-channels')) continue;
 
-            // 선택자 수정: strong -> h3
             const titleEl = card.querySelector('h3');
-            if (!titleEl) {
-                console.log(`Card ${i} has no title element (h3)`);
-                continue;
-            }
+            if (!titleEl) continue;
 
             // 검색어 추출 개선
             let searchQuery = titleEl.textContent
@@ -593,15 +587,20 @@ ${userInfoText}
                 .replace(/\*\*/g, '')
                 .replace(/"/g, '')
                 .replace(/'/g, '')
+                .replace(/#/g, '') // 해시태그 제거
                 .trim();
 
-            // 콜론(:)이 있으면 앞부분만 사용 (제목: 부제목 형식일 경우 핵심만 검색)
-            if (searchQuery.includes(':')) {
-                searchQuery = searchQuery.split(':')[0].trim();
-            }
-            // 하이픈(-)이 있으면 앞부분만 사용
-            if (searchQuery.includes('-')) {
-                searchQuery = searchQuery.split('-')[0].trim();
+            // 특수문자 기준으로 자르기 (제목: 부제목, 제목 - 부제목, 제목/부제목)
+            if (searchQuery.includes(':')) searchQuery = searchQuery.split(':')[0].trim();
+            if (searchQuery.includes('-')) searchQuery = searchQuery.split('-')[0].trim();
+            if (searchQuery.includes('/')) searchQuery = searchQuery.split('/')[0].trim();
+            if (searchQuery.includes('(')) searchQuery = searchQuery.split('(')[0].trim();
+            if (searchQuery.includes('[')) searchQuery = searchQuery.split('[')[0].trim();
+
+            // 여전히 너무 길면 앞 4단어만 사용
+            const words = searchQuery.split(' ');
+            if (words.length > 5) {
+                searchQuery = words.slice(0, 4).join(' ');
             }
 
             console.log(`Searching YouTube for: ${searchQuery} (Category: ${category})`);
