@@ -10,10 +10,49 @@ body {
     min-height: 100vh;
 }
 
+/* 베타 공지 배너 */
+.beta-notice {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    background: #fff3cd;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #ffeeba;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.beta-notice strong {
+    margin-right: 5px;
+}
+
+.beta-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    margin-left: 15px;
+    cursor: pointer;
+    color: #856404;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    padding: 0 5px;
+}
+
+.beta-close:hover {
+    opacity: 1;
+}
+
 /* 고정 네비게이션 바 */
 .navbar {
     position: fixed;
-    top: 0;
+    top: 44px;
+    /* 베타 배너 높이만큼 조정 */
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, 0.95);

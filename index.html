@@ -47,6 +47,13 @@
 </head>
 
 <body>
+    <!-- 베타 서비스 공지 배너 -->
+    <div id="beta-notice" class="beta-notice">
+        <p>🚧 <strong>베타 서비스(Beta)</strong> 운영 중입니다. 더 나은 서비스를 위해 수시로 업데이트될 수 있습니다. 🚧</p>
+        <button type="button" class="beta-close"
+            onclick="document.getElementById('beta-notice').style.display='none'; document.querySelector('.navbar').style.top='0';">&times;</button>
+    </div>
+
     <!-- 고정 네비게이션 바 -->
     <nav class="navbar">
         <div class="nav-container">
