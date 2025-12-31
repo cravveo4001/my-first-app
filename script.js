@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const geminiApiKeyInput = document.getElementById('gemini-api-key');
     const chatgptApiKeyInput = document.getElementById('chatgpt-api-key');
     const claudeApiKeyInput = document.getElementById('claude-api-key');
+    const youtubeApiKeyInput = document.getElementById('youtube-api-key');
 
     // 상수
     const MAX_FREE_USES = 3;
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         geminiKey: 'youtube_recommender_gemini_key',
         chatgptKey: 'youtube_recommender_chatgpt_key',
         claudeKey: 'youtube_recommender_claude_key',
+        youtubeKey: 'youtube_recommender_youtube_key',
         language: 'youtube_recommender_language'
     };
 
@@ -48,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return {
             gemini: localStorage.getItem(STORAGE_KEYS.geminiKey) || '',
             chatgpt: localStorage.getItem(STORAGE_KEYS.chatgptKey) || '',
-            claude: localStorage.getItem(STORAGE_KEYS.claudeKey) || ''
+            claude: localStorage.getItem(STORAGE_KEYS.claudeKey) || '',
+            youtube: localStorage.getItem(STORAGE_KEYS.youtubeKey) || ''
         };
     }
 
@@ -56,12 +59,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (keys.gemini) localStorage.setItem(STORAGE_KEYS.geminiKey, keys.gemini);
         if (keys.chatgpt) localStorage.setItem(STORAGE_KEYS.chatgptKey, keys.chatgpt);
         if (keys.claude) localStorage.setItem(STORAGE_KEYS.claudeKey, keys.claude);
+        if (keys.youtube) localStorage.setItem(STORAGE_KEYS.youtubeKey, keys.youtube);
     }
 
     function clearSavedApiKeys() {
         localStorage.removeItem(STORAGE_KEYS.geminiKey);
         localStorage.removeItem(STORAGE_KEYS.chatgptKey);
         localStorage.removeItem(STORAGE_KEYS.claudeKey);
+        localStorage.removeItem(STORAGE_KEYS.youtubeKey);
     }
 
     function hasUserApiKeys() {
@@ -119,6 +124,14 @@ document.addEventListener('DOMContentLoaded', function () {
             claudeApiKeyInput.placeholder = 'sk-ant-로 시작하는 키';
             claudeApiKeyInput.classList.remove('has-key');
         }
+
+        if (keys.youtube && youtubeApiKeyInput) {
+            youtubeApiKeyInput.placeholder = '•••••••••• (저장됨)';
+            youtubeApiKeyInput.classList.add('has-key');
+        } else if (youtubeApiKeyInput) {
+            youtubeApiKeyInput.placeholder = 'AIza로 시작하는 키';
+            youtubeApiKeyInput.classList.remove('has-key');
+        }
     }
 
     // API 설정 패널 토글
@@ -131,7 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const newKeys = {
             gemini: geminiApiKeyInput.value.trim(),
             chatgpt: chatgptApiKeyInput.value.trim(),
-            claude: claudeApiKeyInput.value.trim()
+            claude: claudeApiKeyInput.value.trim(),
+            youtube: youtubeApiKeyInput ? youtubeApiKeyInput.value.trim() : ''
         };
 
         // 빈 값은 기존 키 유지
@@ -139,7 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const keysToSave = {
             gemini: newKeys.gemini || existingKeys.gemini,
             chatgpt: newKeys.chatgpt || existingKeys.chatgpt,
-            claude: newKeys.claude || existingKeys.claude
+            claude: newKeys.claude || existingKeys.claude,
+            youtube: newKeys.youtube || existingKeys.youtube
         };
 
         saveApiKeys(keysToSave);
@@ -148,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
         geminiApiKeyInput.value = '';
         chatgptApiKeyInput.value = '';
         claudeApiKeyInput.value = '';
+        if (youtubeApiKeyInput) youtubeApiKeyInput.value = '';
 
         updateUsageDisplay();
         alert('✅ API 키가 저장되었습니다!');
@@ -536,8 +552,67 @@ ${userInfoText}
             };
             // 히스토리에 자동 저장
             window.saveToHistoryAuto && window.saveToHistoryAuto(window.currentRecommendations);
+
+            // YouTube API로 실제 채널 검색 (Gemini 결과에 추가)
+            const keys = getSavedApiKeys();
+            if (keys.youtube && geminiResult) {
+                setTimeout(() => {
+                    addYouTubeChannelsToCards(geminiResult, userInfo.category);
+                }, 500);
+            }
         }
     });
+
+    // 추천 카드에 YouTube 채널 추가
+    async function addYouTubeChannelsToCards(container, category) {
+        const keys = getSavedApiKeys();
+        if (!keys.youtube) return;
+
+        const cards = container.querySelectorAll('.recommendation-card');
+        for (let i = 0; i < Math.min(cards.length, 2); i++) {
+            const card = cards[i];
+            if (card.querySelector('.youtube-channels')) continue;
+
+            const titleEl = card.querySelector('strong');
+            if (!titleEl) continue;
+
+            let searchQuery = titleEl.textContent
+                .replace(/추천 채널 주제 \d+:/g, '')
+                .replace(/\*\*/g, '')
+                .trim();
+
+            if (category) searchQuery = category + ' ' + searchQuery;
+
+            try {
+                const response = await fetch(
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(searchQuery)}&maxResults=2&key=${keys.youtube}`
+                );
+
+                if (!response.ok) continue;
+                const data = await response.json();
+                const channels = data.items || [];
+
+                if (channels.length > 0) {
+                    const channelDiv = document.createElement('div');
+                    channelDiv.className = 'youtube-channels';
+                    channelDiv.innerHTML = `
+                        <p class="youtube-channels-title">📺 관련 채널:</p>
+                        <div class="channel-list">
+                            ${channels.map(ch => `
+                                <a href="https://youtube.com/channel/${ch.snippet.channelId}" target="_blank" class="channel-item">
+                                    <img src="${ch.snippet.thumbnails.default.url}" alt="${ch.snippet.channelTitle}" class="channel-thumb">
+                                    <span class="channel-name">${ch.snippet.channelTitle}</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                    `;
+                    card.appendChild(channelDiv);
+                }
+            } catch (error) {
+                console.error('YouTube search error:', error);
+            }
+        }
+    }
 
     // 초기화
     updateUsageDisplay();
@@ -1004,5 +1079,88 @@ ${userInfoText}
         const textContent = recommendations.map(r => r.topic).join(', ');
         return { html, textContent };
     };
+
+    // ========================================
+    // YouTube API 채널 검색 기능
+    // ========================================
+
+    // YouTube API로 채널 검색
+    async function searchYouTubeChannels(query) {
+        const keys = getSavedApiKeys();
+        if (!keys.youtube) {
+            return null;
+        }
+
+        try {
+            const response = await fetch(
+                `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(query + ' 유튜브 채널')}&maxResults=3&key=${keys.youtube}`
+            );
+
+            if (!response.ok) {
+                console.error('YouTube API Error:', response.status);
+                return null;
+            }
+
+            const data = await response.json();
+            return data.items || [];
+        } catch (error) {
+            console.error('YouTube Search Error:', error);
+            return null;
+        }
+    }
+
+    // 추천 결과에 실제 채널 추가
+    async function addYouTubeChannelsToResult(resultElement, topic) {
+        const keys = getSavedApiKeys();
+        if (!keys.youtube) return;
+
+        const channels = await searchYouTubeChannels(topic);
+        if (!channels || channels.length === 0) return;
+
+        // 채널 HTML 생성
+        const channelHtml = `
+            <div class="youtube-channels">
+                <p class="youtube-channels-title">📺 관련 실제 채널:</p>
+                <div class="channel-list">
+                    ${channels.map(ch => `
+                        <a href="https://youtube.com/channel/${ch.snippet.channelId}" target="_blank" class="channel-item">
+                            <img src="${ch.snippet.thumbnails.default.url}" alt="${ch.snippet.channelTitle}" class="channel-thumb">
+                            <span class="channel-name">${ch.snippet.channelTitle}</span>
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        // 각 추천 카드에 채널 추가
+        const cards = resultElement.querySelectorAll('.recommendation-card');
+        cards.forEach(async (card, index) => {
+            const topicEl = card.querySelector('.topic-title, strong');
+            if (topicEl && !card.querySelector('.youtube-channels')) {
+                const topicText = topicEl.textContent.replace(/\*\*/g, '').replace(/추천 채널 주제 \d+:/g, '').trim();
+                const channels = await searchYouTubeChannels(topicText);
+                if (channels && channels.length > 0) {
+                    const channelDiv = document.createElement('div');
+                    channelDiv.className = 'youtube-channels';
+                    channelDiv.innerHTML = `
+                        <p class="youtube-channels-title">📺 관련 채널:</p>
+                        <div class="channel-list">
+                            ${channels.slice(0, 2).map(ch => `
+                                <a href="https://youtube.com/channel/${ch.snippet.channelId}" target="_blank" class="channel-item">
+                                    <img src="${ch.snippet.thumbnails.default.url}" alt="${ch.snippet.channelTitle}" class="channel-thumb">
+                                    <span class="channel-name">${ch.snippet.channelTitle}</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                    `;
+                    card.appendChild(channelDiv);
+                }
+            }
+        });
+    }
+
+    // 전역 함수로 등록
+    window.searchYouTubeChannels = searchYouTubeChannels;
+    window.addYouTubeChannelsToResult = addYouTubeChannelsToResult;
 
 });

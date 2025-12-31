@@ -1686,3 +1686,61 @@ header {
 .copy-result-btn:active {
     transform: translateY(0);
 }
+
+/* YouTube 채널 표시 스타일 */
+.youtube-channels {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.youtube-channels-title {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.channel-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.channel-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.channel-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+}
+
+.channel-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.channel-name {
+    font-size: 0.8rem;
+    color: white;
+    font-weight: 500;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* YouTube API 키 입력 필드 스타일 */
+.youtube-api label {
+    color: #ff0000 !important;
+}
