@@ -55,7 +55,8 @@
                 <a href="/" class="nav-link active">홈</a>
                 <a href="/about.html" class="nav-link">소개</a>
                 <a href="#faq-section" class="nav-link">FAQ</a>
-                <a href="/privacy.html" class="nav-link">개인정보처리방침</a>
+                <button type="button" class="nav-link nav-btn" id="favorites-btn">⭐ 즐겨찾기</button>
+                <button type="button" class="nav-link nav-btn" id="history-btn">📜 히스토리</button>
             </div>
             <div id="google_translate_element" class="nav-translate"></div>
         </div>
@@ -231,18 +232,33 @@
                     <input type="text" id="interest" name="interest" placeholder="예: 부업, 자기계발, 인테리어, ASMR...">
                 </div>
 
-                <button type="submit" class="submit-btn" id="submit-btn">
-                    <span class="btn-text" data-i18n="submitBtn">채널 추천 받기</span>
-                    <span class="btn-loading hidden">
-                        <span class="spinner"></span>
-                        추천 생성 중...
-                    </span>
-                </button>
+                <div class="button-row">
+                    <button type="button" class="random-btn" id="random-btn">
+                        🎲 랜덤 추천
+                    </button>
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        <span class="btn-text" data-i18n="submitBtn">채널 추천 받기</span>
+                        <span class="btn-loading hidden">
+                            <span class="spinner"></span>
+                            추천 생성 중...
+                        </span>
+                    </button>
+                </div>
             </form>
 
 
             <section id="result-section" class="result-section hidden">
-                <h2 data-i18n="resultTitle">📺 추천 채널 목록</h2>
+                <div class="result-header">
+                    <h2 data-i18n="resultTitle">📺 추천 채널 목록</h2>
+                    <div class="result-actions">
+                        <button type="button" class="action-btn favorite-all-btn" id="save-result-btn" title="전체 결과 저장">
+                            ⭐ 저장
+                        </button>
+                        <button type="button" class="action-btn share-btn" id="share-btn" title="결과 공유">
+                            🔗 공유
+                        </button>
+                    </div>
+                </div>
                 <div class="result-grid">
                     <div class="result-column">
                         <div class="ai-header gemini">🤖 Gemini (Google)</div>
@@ -357,6 +373,71 @@
             </div>
         </div>
     </section>
+
+    <!-- 즐겨찾기 모달 -->
+    <div id="favorites-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⭐ 즐겨찾기</h3>
+                <button type="button" class="modal-close" data-modal="favorites-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="favorites-list">
+                <p class="empty-message">저장된 즐겨찾기가 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="clear-btn" id="clear-favorites">🗑️ 전체 삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 히스토리 모달 -->
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📜 추천 히스토리</h3>
+                <button type="button" class="modal-close" data-modal="history-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="history-list">
+                <p class="empty-message">추천 히스토리가 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="clear-btn" id="clear-history">🗑️ 전체 삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 공유 모달 -->
+    <div id="share-modal" class="modal hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>🔗 결과 공유</h3>
+                <button type="button" class="modal-close" data-modal="share-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-buttons">
+                    <button type="button" class="share-option" id="share-twitter">
+                        <span class="share-icon">🐦</span>
+                        <span>Twitter</span>
+                    </button>
+                    <button type="button" class="share-option" id="share-facebook">
+                        <span class="share-icon">📘</span>
+                        <span>Facebook</span>
+                    </button>
+                    <button type="button" class="share-option" id="share-kakao">
+                        <span class="share-icon">💬</span>
+                        <span>카카오톡</span>
+                    </button>
+                    <button type="button" class="share-option" id="share-copy">
+                        <span class="share-icon">📋</span>
+                        <span>링크 복사</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast" class="toast hidden"></div>
 
     <footer class="site-footer">
         <div class="footer-nav">

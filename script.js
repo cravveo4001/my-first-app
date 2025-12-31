@@ -469,6 +469,7 @@ ${userInfoText}
         }
 
         const promises = [];
+        const allResults = { gemini: null, chatgpt: null, claude: null };
 
         // Gemini 호출
         if (canUseGemini) {
@@ -477,6 +478,7 @@ ${userInfoText}
                     .then(response => {
                         const recommendations = parseAIResponse(response);
                         geminiResult.innerHTML = createResultHTML(recommendations);
+                        allResults.gemini = recommendations.map(r => r.topic).join(', ');
                     })
                     .catch(error => {
                         console.error('Gemini API Error:', error);
@@ -492,6 +494,7 @@ ${userInfoText}
                     .then(response => {
                         const recommendations = parseAIResponse(response);
                         chatgptResult.innerHTML = createResultHTML(recommendations);
+                        allResults.chatgpt = recommendations.map(r => r.topic).join(', ');
                     })
                     .catch(error => {
                         console.error('ChatGPT API Error:', error);
@@ -507,6 +510,7 @@ ${userInfoText}
                     .then(response => {
                         const recommendations = parseAIResponse(response);
                         claudeResult.innerHTML = createResultHTML(recommendations);
+                        allResults.claude = recommendations.map(r => r.topic).join(', ');
                     })
                     .catch(error => {
                         console.error('Claude API Error:', error);
@@ -515,9 +519,24 @@ ${userInfoText}
             );
         }
 
-        // 호출한 API들이 모두 완료되면 로딩 해제
+        // 호출한 API들이 모두 완료되면 로딩 해제 및 결과 저장
         await Promise.all(promises);
         setLoading(false);
+
+        // 결과 저장 (히스토리/즐겨찾기용)
+        const resultTexts = [];
+        if (allResults.gemini) resultTexts.push(allResults.gemini);
+        if (allResults.chatgpt) resultTexts.push(allResults.chatgpt);
+        if (allResults.claude) resultTexts.push(allResults.claude);
+
+        if (resultTexts.length > 0) {
+            window.currentRecommendations = {
+                title: `${userInfo.category || '일반'} 추천`,
+                content: resultTexts.join(' | ').substring(0, 200) + (resultTexts.join(' | ').length > 200 ? '...' : '')
+            };
+            // 히스토리에 자동 저장
+            window.saveToHistoryAuto && window.saveToHistoryAuto(window.currentRecommendations);
+        }
     });
 
     // 초기화
@@ -564,4 +583,333 @@ ${userInfoText}
             faqItem.classList.toggle('active');
         });
     });
+
+    // ========================================
+    // 새로운 기능 구현
+    // ========================================
+
+    // 추가 Storage 키
+    STORAGE_KEYS.favorites = 'youtube_recommender_favorites';
+    STORAGE_KEYS.history = 'youtube_recommender_history';
+
+    // 현재 추천 결과 저장용
+    let currentRecommendations = null;
+
+    // 토스트 알림
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.className = `toast ${type}`;
+
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3000);
+    }
+
+    // 즐겨찾기 관리
+    function getFavorites() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.favorites) || '[]');
+        } catch {
+            return [];
+        }
+    }
+
+    function saveFavorite(data) {
+        const favorites = getFavorites();
+        const newFavorite = {
+            id: Date.now(),
+            date: new Date().toLocaleString('ko-KR'),
+            ...data
+        };
+        favorites.unshift(newFavorite);
+        // 최대 50개 유지
+        if (favorites.length > 50) favorites.pop();
+        localStorage.setItem(STORAGE_KEYS.favorites, JSON.stringify(favorites));
+        showToast('⭐ 즐겨찾기에 저장되었습니다!');
+    }
+
+    function deleteFavorite(id) {
+        const favorites = getFavorites().filter(f => f.id !== id);
+        localStorage.setItem(STORAGE_KEYS.favorites, JSON.stringify(favorites));
+        renderFavorites();
+        showToast('삭제되었습니다.');
+    }
+
+    function clearAllFavorites() {
+        if (confirm('모든 즐겨찾기를 삭제하시겠습니까?')) {
+            localStorage.removeItem(STORAGE_KEYS.favorites);
+            renderFavorites();
+            showToast('모든 즐겨찾기가 삭제되었습니다.');
+        }
+    }
+
+    function renderFavorites() {
+        const container = document.getElementById('favorites-list');
+        if (!container) return;
+
+        const favorites = getFavorites();
+
+        if (favorites.length === 0) {
+            container.innerHTML = '<p class="empty-message">저장된 즐겨찾기가 없습니다.</p>';
+            return;
+        }
+
+        container.innerHTML = favorites.map(item => `
+            <div class="saved-item" data-id="${item.id}">
+                <div class="saved-item-header">
+                    <span class="saved-item-title">${item.title || 'AI 추천 결과'}</span>
+                    <span class="saved-item-date">${item.date}</span>
+                </div>
+                <div class="saved-item-content">${item.content || ''}</div>
+                <div class="saved-item-actions">
+                    <button class="saved-item-btn delete" onclick="window.deleteFavorite(${item.id})">🗑️ 삭제</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 히스토리 관리
+    function getHistory() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.history) || '[]');
+        } catch {
+            return [];
+        }
+    }
+
+    function saveToHistory(data) {
+        const history = getHistory();
+        const newEntry = {
+            id: Date.now(),
+            date: new Date().toLocaleString('ko-KR'),
+            ...data
+        };
+        history.unshift(newEntry);
+        // 최대 20개 유지
+        if (history.length > 20) history.pop();
+        localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history));
+    }
+
+    function deleteHistoryItem(id) {
+        const history = getHistory().filter(h => h.id !== id);
+        localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history));
+        renderHistory();
+        showToast('삭제되었습니다.');
+    }
+
+    function clearAllHistory() {
+        if (confirm('모든 히스토리를 삭제하시겠습니까?')) {
+            localStorage.removeItem(STORAGE_KEYS.history);
+            renderHistory();
+            showToast('모든 히스토리가 삭제되었습니다.');
+        }
+    }
+
+    function renderHistory() {
+        const container = document.getElementById('history-list');
+        if (!container) return;
+
+        const history = getHistory();
+
+        if (history.length === 0) {
+            container.innerHTML = '<p class="empty-message">추천 히스토리가 없습니다.</p>';
+            return;
+        }
+
+        container.innerHTML = history.map(item => `
+            <div class="saved-item" data-id="${item.id}">
+                <div class="saved-item-header">
+                    <span class="saved-item-title">${item.title || 'AI 추천 결과'}</span>
+                    <span class="saved-item-date">${item.date}</span>
+                </div>
+                <div class="saved-item-content">${item.content || ''}</div>
+                <div class="saved-item-actions">
+                    <button class="saved-item-btn delete" onclick="window.deleteHistoryItem(${item.id})">🗑️ 삭제</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 전역 함수 등록 (onclick에서 사용)
+    window.deleteFavorite = deleteFavorite;
+    window.deleteHistoryItem = deleteHistoryItem;
+    window.saveToHistoryAuto = saveToHistory;
+    window.currentRecommendations = null;
+
+    // 모달 관리
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // 모달 닫기 버튼
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modalId = btn.getAttribute('data-modal');
+            closeModal(modalId);
+        });
+    });
+
+    // 모달 배경 클릭 시 닫기
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+
+    // 즐겨찾기 버튼
+    const favoritesBtn = document.getElementById('favorites-btn');
+    if (favoritesBtn) {
+        favoritesBtn.addEventListener('click', () => {
+            renderFavorites();
+            openModal('favorites-modal');
+        });
+    }
+
+    // 히스토리 버튼
+    const historyBtn = document.getElementById('history-btn');
+    if (historyBtn) {
+        historyBtn.addEventListener('click', () => {
+            renderHistory();
+            openModal('history-modal');
+        });
+    }
+
+    // 전체 삭제 버튼
+    const clearFavoritesBtn = document.getElementById('clear-favorites');
+    if (clearFavoritesBtn) {
+        clearFavoritesBtn.addEventListener('click', clearAllFavorites);
+    }
+
+    const clearHistoryBtn = document.getElementById('clear-history');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', clearAllHistory);
+    }
+
+    // 결과 저장 버튼
+    const saveResultBtn = document.getElementById('save-result-btn');
+    if (saveResultBtn) {
+        saveResultBtn.addEventListener('click', () => {
+            if (currentRecommendations) {
+                saveFavorite(currentRecommendations);
+            } else {
+                showToast('저장할 추천 결과가 없습니다.', 'error');
+            }
+        });
+    }
+
+    // 공유 버튼
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            openModal('share-modal');
+        });
+    }
+
+    // 공유 옵션들
+    const shareUrl = window.location.href;
+    const shareTitle = 'AI 유튜브 채널 추천 결과';
+    const shareText = '3개 AI가 추천한 맞춤 유튜브 채널을 확인해보세요!';
+
+    document.getElementById('share-twitter')?.addEventListener('click', () => {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        closeModal('share-modal');
+    });
+
+    document.getElementById('share-facebook')?.addEventListener('click', () => {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+        closeModal('share-modal');
+    });
+
+    document.getElementById('share-kakao')?.addEventListener('click', () => {
+        // 카카오톡은 SDK 필요, 일단 링크 복사로 대체
+        navigator.clipboard.writeText(`${shareText}\n${shareUrl}`).then(() => {
+            showToast('📋 링크가 복사되었습니다! 카카오톡에 붙여넣기하세요.');
+            closeModal('share-modal');
+        });
+    });
+
+    document.getElementById('share-copy')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            showToast('📋 링크가 복사되었습니다!');
+            closeModal('share-modal');
+        }).catch(() => {
+            showToast('복사에 실패했습니다.', 'error');
+        });
+    });
+
+    // 랜덤 추천 버튼
+    const randomBtn = document.getElementById('random-btn');
+    if (randomBtn) {
+        randomBtn.addEventListener('click', () => {
+            // 랜덤 값 설정
+            const categories = ['게임', '음악', '영화/드라마', '스포츠', '먹방/요리', '뷰티/패션', '여행', '교육/학습', '기술/IT', '경제/재테크', '일상/브이로그', '반려동물', '자동차', '운동/헬스'];
+            const styles = ['재미/유머', '정보/지식', '힐링/감성', '리뷰/비교', '튜토리얼', '토크/대화', '뉴스/시사'];
+            const durations = ['쇼츠 (1분 이하)', '짧은 영상 (5분 이하)', '중간 길이 (10-20분)', '긴 영상 (30분 이상)'];
+
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+            const randomDuration = durations[Math.floor(Math.random() * durations.length)];
+
+            // 폼에 값 설정
+            document.getElementById('category').value = randomCategory;
+            document.getElementById('style').value = randomStyle;
+            document.getElementById('duration').value = randomDuration;
+
+            // 다른 필드 초기화
+            document.getElementById('age-group').value = '';
+            document.getElementById('gender').value = '';
+            document.getElementById('region').value = '';
+            document.getElementById('interest').value = '';
+
+            // 폼 제출
+            form.dispatchEvent(new Event('submit'));
+
+            showToast(`🎲 랜덤: ${randomCategory} + ${randomStyle}`);
+        });
+    }
+
+    // 추천 결과를 currentRecommendations에 저장하도록 기존 코드 수정
+    // 결과 생성 시 호출되는 함수
+    function storeRecommendations(gemini, chatgpt, claude) {
+        const results = [];
+        if (gemini) results.push(`Gemini: ${gemini}`);
+        if (chatgpt) results.push(`ChatGPT: ${chatgpt}`);
+        if (claude) results.push(`Claude: ${claude}`);
+
+        currentRecommendations = {
+            title: `${document.getElementById('category').value || '일반'} 추천`,
+            content: results.join(' | ').substring(0, 200) + '...'
+        };
+
+        // 히스토리에 자동 저장
+        saveToHistory(currentRecommendations);
+    }
+
+    // 기존 결과 생성 함수 래핑
+    const originalCreateResultHTML = createResultHTML;
+    window.createResultHTMLWithStore = function (recommendations, aiType) {
+        const html = originalCreateResultHTML(recommendations);
+        // 추천 결과 텍스트 추출
+        const textContent = recommendations.map(r => r.topic).join(', ');
+        return { html, textContent };
+    };
+
 });
