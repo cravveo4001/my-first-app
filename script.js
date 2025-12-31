@@ -565,38 +565,57 @@ ${userInfoText}
 
     // 추천 카드에 YouTube 채널 추가
     async function addYouTubeChannelsToCards(container, category) {
+        console.log('addYouTubeChannelsToCards called');
         const keys = getSavedApiKeys();
-        if (!keys.youtube) return;
+        if (!keys.youtube) {
+            console.log('No YouTube API key found');
+            return;
+        }
 
         const cards = container.querySelectorAll('.recommendation-card');
-        for (let i = 0; i < Math.min(cards.length, 2); i++) {
+        console.log(`Found ${cards.length} cards`);
+
+        for (let i = 0; i < Math.min(cards.length, 3); i++) {
             const card = cards[i];
             if (card.querySelector('.youtube-channels')) continue;
 
             const titleEl = card.querySelector('strong');
-            if (!titleEl) continue;
+            if (!titleEl) {
+                console.log(`Card ${i} has no title element (strong tag)`);
+                continue;
+            }
 
+            // 검색어 추출 개선: **, "주제 n:", 따옴표 등 제거
             let searchQuery = titleEl.textContent
                 .replace(/추천 채널 주제 \d+:/g, '')
                 .replace(/\*\*/g, '')
+                .replace(/"/g, '')
+                .replace(/'/g, '')
                 .trim();
+
+            console.log(`Searching YouTube for: ${searchQuery} (Category: ${category})`);
 
             if (category) searchQuery = category + ' ' + searchQuery;
 
             try {
-                const response = await fetch(
-                    `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(searchQuery)}&maxResults=2&key=${keys.youtube}`
-                );
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(searchQuery)}&maxResults=2&key=${keys.youtube}`;
+                const response = await fetch(url);
 
-                if (!response.ok) continue;
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('YouTube API Error:', response.status, errorText);
+                    continue;
+                }
+
                 const data = await response.json();
                 const channels = data.items || [];
+                console.log(`Found ${channels.length} channels for ${searchQuery}`);
 
                 if (channels.length > 0) {
                     const channelDiv = document.createElement('div');
                     channelDiv.className = 'youtube-channels';
                     channelDiv.innerHTML = `
-                        <p class="youtube-channels-title">📺 관련 채널:</p>
+                        <p class="youtube-channels-title">📺 관련 실제 채널:</p>
                         <div class="channel-list">
                             ${channels.map(ch => `
                                 <a href="https://youtube.com/channel/${ch.snippet.channelId}" target="_blank" class="channel-item">
