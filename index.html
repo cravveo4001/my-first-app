@@ -27,6 +27,10 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <!-- Download libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <!-- Schema.org 구조화 데이터 -->
     <script type="application/ld+json">
     {
@@ -410,10 +414,23 @@
     <div id="share-modal" class="modal hidden">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>🔗 결과 공유</h3>
+                <h3>📥 저장 & 공유</h3>
                 <button type="button" class="modal-close" data-modal="share-modal">&times;</button>
             </div>
             <div class="modal-body">
+                <h4 class="share-section-title">📥 다운로드</h4>
+                <div class="share-buttons">
+                    <button type="button" class="share-option download-option" id="download-image">
+                        <span class="share-icon">🖼️</span>
+                        <span>이미지 저장</span>
+                    </button>
+                    <button type="button" class="share-option download-option" id="download-pdf">
+                        <span class="share-icon">📄</span>
+                        <span>PDF 저장</span>
+                    </button>
+                </div>
+
+                <h4 class="share-section-title">🔗 공유하기</h4>
                 <div class="share-buttons">
                     <button type="button" class="share-option" id="share-twitter">
                         <span class="share-icon">🐦</span>
@@ -429,7 +446,7 @@
                     </button>
                     <button type="button" class="share-option" id="share-copy">
                         <span class="share-icon">📋</span>
-                        <span>링크 복사</span>
+                        <span>텍스트 복사</span>
                     </button>
                 </div>
             </div>

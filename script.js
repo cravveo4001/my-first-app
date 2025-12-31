@@ -829,7 +829,9 @@ ${userInfoText}
     const shareText = '3개 AI가 추천한 맞춤 유튜브 채널을 확인해보세요!';
 
     document.getElementById('share-twitter')?.addEventListener('click', () => {
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        const resultText = getResultsText();
+        const tweetText = resultText ? `AI 유튜브 채널 추천 결과:\n${resultText.substring(0, 200)}...` : shareText;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
         closeModal('share-modal');
     });
 
@@ -839,20 +841,111 @@ ${userInfoText}
     });
 
     document.getElementById('share-kakao')?.addEventListener('click', () => {
-        // 카카오톡은 SDK 필요, 일단 링크 복사로 대체
-        navigator.clipboard.writeText(`${shareText}\n${shareUrl}`).then(() => {
-            showToast('📋 링크가 복사되었습니다! 카카오톡에 붙여넣기하세요.');
+        const resultText = getResultsText();
+        const shareContent = resultText
+            ? `🎬 AI 유튜브 채널 추천 결과\n\n${resultText}\n\n${shareUrl}`
+            : `${shareText}\n${shareUrl}`;
+        navigator.clipboard.writeText(shareContent).then(() => {
+            showToast('📋 추천 결과가 복사되었습니다! 카카오톡에 붙여넣기하세요.');
             closeModal('share-modal');
         });
     });
 
+    // 텍스트 복사 (결과 포함)
     document.getElementById('share-copy')?.addEventListener('click', () => {
-        navigator.clipboard.writeText(shareUrl).then(() => {
-            showToast('📋 링크가 복사되었습니다!');
-            closeModal('share-modal');
-        }).catch(() => {
-            showToast('복사에 실패했습니다.', 'error');
-        });
+        const resultText = getResultsText();
+        if (resultText) {
+            const fullText = `🎬 AI 유튜브 채널 추천 결과\n\n${resultText}\n\n🔗 ${shareUrl}`;
+            navigator.clipboard.writeText(fullText).then(() => {
+                showToast('📋 추천 결과가 복사되었습니다!');
+                closeModal('share-modal');
+            }).catch(() => {
+                showToast('복사에 실패했습니다.', 'error');
+            });
+        } else {
+            showToast('복사할 결과가 없습니다.', 'error');
+        }
+    });
+
+    // 결과 텍스트 추출 함수
+    function getResultsText() {
+        const resultSection = document.getElementById('result-section');
+        if (!resultSection || resultSection.classList.contains('hidden')) return null;
+
+        let text = '';
+        const geminiResult = document.getElementById('gemini-result');
+        const chatgptResult = document.getElementById('chatgpt-result');
+        const claudeResult = document.getElementById('claude-result');
+
+        if (geminiResult && geminiResult.textContent.trim() && !geminiResult.textContent.includes('API 키가 필요')) {
+            text += '🤖 Gemini 추천:\n' + geminiResult.textContent.trim() + '\n\n';
+        }
+        if (chatgptResult && chatgptResult.textContent.trim() && !chatgptResult.textContent.includes('API 키가 필요')) {
+            text += '💬 ChatGPT 추천:\n' + chatgptResult.textContent.trim() + '\n\n';
+        }
+        if (claudeResult && claudeResult.textContent.trim() && !claudeResult.textContent.includes('API 키가 필요')) {
+            text += '🧠 Claude 추천:\n' + claudeResult.textContent.trim() + '\n\n';
+        }
+
+        return text.trim() || null;
+    }
+
+    // 이미지 다운로드
+    document.getElementById('download-image')?.addEventListener('click', async () => {
+        const resultSection = document.getElementById('result-section');
+        if (!resultSection || resultSection.classList.contains('hidden')) {
+            showToast('다운로드할 결과가 없습니다.', 'error');
+            return;
+        }
+
+        showToast('🖼️ 이미지 생성 중...');
+        closeModal('share-modal');
+
+        try {
+            const canvas = await html2canvas(resultSection, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                useCORS: true
+            });
+
+            const link = document.createElement('a');
+            link.download = `AI_유튜브_추천_${new Date().toISOString().slice(0, 10)}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            showToast('✅ 이미지가 다운로드되었습니다!');
+        } catch (error) {
+            console.error('이미지 생성 오류:', error);
+            showToast('이미지 생성에 실패했습니다.', 'error');
+        }
+    });
+
+    // PDF 다운로드
+    document.getElementById('download-pdf')?.addEventListener('click', async () => {
+        const resultSection = document.getElementById('result-section');
+        if (!resultSection || resultSection.classList.contains('hidden')) {
+            showToast('다운로드할 결과가 없습니다.', 'error');
+            return;
+        }
+
+        showToast('📄 PDF 생성 중...');
+        closeModal('share-modal');
+
+        try {
+            const opt = {
+                margin: 10,
+                filename: `AI_유튜브_추천_${new Date().toISOString().slice(0, 10)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            await html2pdf().set(opt).from(resultSection).save();
+            showToast('✅ PDF가 다운로드되었습니다!');
+        } catch (error) {
+            console.error('PDF 생성 오류:', error);
+            showToast('PDF 생성에 실패했습니다.', 'error');
+        }
     });
 
     // 랜덤 추천 버튼

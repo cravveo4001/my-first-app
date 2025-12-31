@@ -1661,3 +1661,31 @@ header {
         display: none;
     }
 }
+
+/* 공유 모달 섹션 타이틀 */
+.share-section-title {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 12px;
+    margin-top: 20px;
+    font-weight: 600;
+}
+
+.share-section-title:first-child {
+    margin-top: 0;
+}
+
+/* 다운로드 버튼 스타일 */
+.download-option {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border-color: #10b981 !important;
+}
+
+.download-option:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border-color: #059669 !important;
+}
+
+.download-option span:last-child {
+    color: white !important;
+}
