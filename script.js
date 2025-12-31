@@ -807,8 +807,8 @@ ${userInfoText}
     const saveResultBtn = document.getElementById('save-result-btn');
     if (saveResultBtn) {
         saveResultBtn.addEventListener('click', () => {
-            if (currentRecommendations) {
-                saveFavorite(currentRecommendations);
+            if (window.currentRecommendations) {
+                saveFavorite(window.currentRecommendations);
             } else {
                 showToast('저장할 추천 결과가 없습니다.', 'error');
             }
