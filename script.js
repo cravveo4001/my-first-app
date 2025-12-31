@@ -595,6 +595,15 @@ ${userInfoText}
                 .replace(/'/g, '')
                 .trim();
 
+            // 콜론(:)이 있으면 앞부분만 사용 (제목: 부제목 형식일 경우 핵심만 검색)
+            if (searchQuery.includes(':')) {
+                searchQuery = searchQuery.split(':')[0].trim();
+            }
+            // 하이픈(-)이 있으면 앞부분만 사용
+            if (searchQuery.includes('-')) {
+                searchQuery = searchQuery.split('-')[0].trim();
+            }
+
             console.log(`Searching YouTube for: ${searchQuery} (Category: ${category})`);
 
             if (category) searchQuery = category + ' ' + searchQuery;
