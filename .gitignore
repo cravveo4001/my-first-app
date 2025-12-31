@@ -1,5 +1,7 @@
 # Environment variables (API keys)
 .env
+.env.local
+.env*.local
 
 # Node.js
 node_modules/
