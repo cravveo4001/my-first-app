@@ -27,10 +27,6 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Download libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <!-- Schema.org 구조화 데이터 -->
     <script type="application/ld+json">
     {
@@ -414,41 +410,17 @@
     <div id="share-modal" class="modal hidden">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>📥 저장 & 공유</h3>
+                <h3>📋 결과 복사</h3>
                 <button type="button" class="modal-close" data-modal="share-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <h4 class="share-section-title">📥 다운로드</h4>
-                <div class="share-buttons">
-                    <button type="button" class="share-option download-option" id="download-image">
-                        <span class="share-icon">🖼️</span>
-                        <span>이미지 저장</span>
-                    </button>
-                    <button type="button" class="share-option download-option" id="download-pdf">
-                        <span class="share-icon">📄</span>
-                        <span>PDF 저장</span>
-                    </button>
-                </div>
-
-                <h4 class="share-section-title">🔗 공유하기</h4>
-                <div class="share-buttons">
-                    <button type="button" class="share-option" id="share-twitter">
-                        <span class="share-icon">🐦</span>
-                        <span>Twitter</span>
-                    </button>
-                    <button type="button" class="share-option" id="share-facebook">
-                        <span class="share-icon">📘</span>
-                        <span>Facebook</span>
-                    </button>
-                    <button type="button" class="share-option" id="share-kakao">
-                        <span class="share-icon">💬</span>
-                        <span>카카오톡</span>
-                    </button>
-                    <button type="button" class="share-option" id="share-copy">
-                        <span class="share-icon">📋</span>
-                        <span>텍스트 복사</span>
-                    </button>
-                </div>
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                    추천 결과를 클립보드에 복사합니다.<br>
+                    카카오톡, 메모장 등에 붙여넣기하세요!
+                </p>
+                <button type="button" class="copy-result-btn" id="share-copy">
+                    📋 결과 텍스트 복사하기
+                </button>
             </div>
         </div>
     </div>

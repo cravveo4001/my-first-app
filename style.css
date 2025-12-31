@@ -1662,30 +1662,27 @@ header {
     }
 }
 
-/* 공유 모달 섹션 타이틀 */
-.share-section-title {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 12px;
-    margin-top: 20px;
+/* 결과 복사 버튼 스타일 */
+.copy-result-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
-.share-section-title:first-child {
-    margin-top: 0;
+.copy-result-btn:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 }
 
-/* 다운로드 버튼 스타일 */
-.download-option {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-    border-color: #10b981 !important;
-}
-
-.download-option:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-    border-color: #059669 !important;
-}
-
-.download-option span:last-child {
-    color: white !important;
+.copy-result-btn:active {
+    transform: translateY(0);
 }
