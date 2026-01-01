@@ -408,10 +408,14 @@ ${userInfoText}
         let resultHTML = '';
 
         recommendations.forEach((item, index) => {
+            const encodedTopic = encodeURIComponent(item.topic);
             resultHTML += `
                 <div class="result-item">
                     <h3>추천 채널 주제 ${index + 1}: ${item.topic}</h3>
                     <p><span class="reason-label">추천 이유:</span> ${item.reason || '맞춤형 콘텐츠를 제공합니다.'}</p>
+                    <a href="workflow.html?topic=${encodedTopic}" target="_blank" class="create-channel-btn" style="display:inline-block; margin-top:10px; padding:8px 16px; background:#667eea; color:white; text-decoration:none; border-radius:6px; font-size:0.9rem;">
+                        🚀 이 주제로 워크플로우 시작
+                    </a>
                 </div>
             `;
         });
@@ -638,7 +642,7 @@ ${userInfoText}
                     channelDiv.innerHTML = `
                         <p class="youtube-channels-title">📺 관련 실제 채널:</p>
                         <div class="channel-list">
-                            ${channels.map(ch => `
+                            ${channels.slice(0, 2).map(ch => `
                                 <a href="https://youtube.com/channel/${ch.snippet.channelId}" target="_blank" class="channel-item">
                                     <img src="${ch.snippet.thumbnails.default.url}" alt="${ch.snippet.channelTitle}" class="channel-thumb">
                                     <span class="channel-name">${ch.snippet.channelTitle}</span>

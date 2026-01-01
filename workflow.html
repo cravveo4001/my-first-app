@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workflow Studio (Factory Mode)</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="workflow.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <i class="fas fa-network-wired"></i>
+            <span>Channel Factory <span class="badge">PRO</span></span>
+        </div>
+        <div class="actions">
+            <span class="status-text" id="status-indicator">준비 완료</span>
+            <button class="btn-primary" id="run-workflow-btn"><i class="fas fa-play"></i> Run Factory</button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        <!-- Floating Toolbar (Draggable Nodes) -->
+        <div class="floating-toolbar">
+            <div class="toolbar-header">
+                <i class="fas fa-toolbox"></i> 도구 상자
+            </div>
+
+            <div class="toolbar-section">
+                <div class="section-title">🆔 아이덴티티</div>
+                <div class="toolbar-item" draggable="true" data-type="channel-name">
+                    <i class="fas fa-signature" style="color: #FF6B6B;"></i> 채널명 생성
+                </div>
+                <div class="toolbar-item" draggable="true" data-type="channel-handle">
+                    <i class="fas fa-at" style="color: #FF8787;"></i> 핸들(@) 생성
+                </div>
+                <div class="toolbar-item" draggable="true" data-type="target-audience">
+                    <i class="fas fa-users" style="color: #FFA5A5;"></i> 타겟 분석
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <div class="section-title">🎨 비주얼</div>
+                <div class="toolbar-item" draggable="true" data-type="profile-pic">
+                    <i class="fas fa-user-circle" style="color: #4ECDC4;"></i> 프로필 프롬프트
+                </div>
+                <div class="toolbar-item" draggable="true" data-type="banner-image">
+                    <i class="fas fa-image" style="color: #45B7AF;"></i> 배너 기획
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <div class="section-title">📝 콘텐츠</div>
+                <div class="toolbar-item" draggable="true" data-type="topic-research">
+                    <i class="fas fa-search" style="color: #FFE66D;"></i> 주제 연구
+                </div>
+                <div class="toolbar-item" draggable="true" data-type="video-metadata">
+                    <i class="fas fa-video" style="color: #FFD93D;"></i> 영상 메타데이터
+                </div>
+                <div class="toolbar-item" draggable="true" data-type="script-gen">
+                    <i class="fas fa-file-alt" style="color: #F7C948;"></i> 대본 생성
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <div class="section-title">🌍 글로벌</div>
+                <div class="toolbar-item" draggable="true" data-type="translator">
+                    <i class="fas fa-language" style="color: #A06CD5;"></i> 번역기
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div id="canvas-container" class="canvas-container">
+            <div id="nodes-layer" class="layer nodes-layer">
+                <!-- Nodes will be injected here -->
+            </div>
+            <svg id="connections-layer" class="layer connections-layer">
+                <!-- Connections will be drawn here -->
+            </svg>
+            <div class="grid-background"></div>
+        </div>
+
+        <!-- Right Sidebar (Properties) -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-sliders-h"></i> 노드 설정
+            </div>
+            <div id="properties-content" class="sidebar-content">
+                <div class="empty-state">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <p>노드를 선택하면<br>설정이 표시됩니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Client (Shared) -->
+    <script src="api-client.js"></script>
+    <!-- Core Engine -->
+    <script src="workflow.js"></script>
+</body>
+
+</html>

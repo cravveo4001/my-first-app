@@ -1,0 +1,392 @@
+/* Base Reset */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    color: #ecf0f1;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+/* Header */
+header {
+    height: 60px;
+    background: #2d3436;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 100;
+    position: relative;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.badge {
+    background: #FFD700;
+    color: black;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.btn-primary {
+    background: #667eea;
+    border: none;
+    padding: 8px 16px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #5a6fd6;
+}
+
+/* Workspace Layout */
+.workspace {
+    display: flex;
+    height: calc(100vh - 60px);
+    position: relative;
+}
+
+/* Floating Toolbar */
+.floating-toolbar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 220px;
+    background: rgba(45, 52, 54, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid #444;
+    border-radius: 12px;
+    z-index: 20;
+    padding: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.toolbar-header {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    font-weight: 600;
+    color: #eee;
+}
+
+.toolbar-section {
+    margin-top: 15px;
+}
+
+.section-title {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-left: 5px;
+}
+
+.toolbar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #363636;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    cursor: grab;
+    transition: transform 0.1s, background 0.1s;
+    font-size: 0.9rem;
+}
+
+.toolbar-item:hover {
+    background: #444;
+    transform: translateX(2px);
+}
+
+.toolbar-item:active {
+    cursor: grabbing;
+}
+
+/* Canvas */
+.canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #1e1e1e;
+    cursor: grab;
+}
+
+.canvas-container:active {
+    cursor: grabbing;
+}
+
+/* Grid Background */
+.grid-background {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, #ffffff05 1px, transparent 1px),
+        linear-gradient(to bottom, #ffffff05 1px, transparent 1px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Layers (Pan/Zoom Targets) */
+.layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.nodes-layer {
+    z-index: 10;
+    pointer-events: auto;
+}
+
+/* Nodes need events */
+.connections-layer {
+    z-index: 5;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.connections-layer path {
+    fill: none;
+    stroke: #666;
+    stroke-width: 2px;
+}
+
+/* Node Styles */
+.node {
+    position: absolute;
+    width: 260px;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: white;
+    user-select: none;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.node:hover {
+    border-color: #888;
+}
+
+.node.selected {
+    border-color: #FFD700;
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
+}
+
+.node-header {
+    padding: 10px 15px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 10px 10px 0 0;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.node-body {
+    padding: 15px;
+    font-size: 0.85rem;
+    color: #ccc;
+    line-height: 1.4;
+    min-height: 60px;
+}
+
+/* Sockets */
+.socket {
+    width: 12px;
+    height: 12px;
+    background: #888;
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    border: 2px solid #1e1e1e;
+    transition: background 0.2s;
+}
+
+.socket:hover {
+    background: #fff;
+}
+
+.socket.input {
+    left: -6px;
+}
+
+.socket.output {
+    right: -6px;
+}
+
+/* Status Indicators */
+.node-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #444;
+}
+
+.node-status.running {
+    background: #F1C40F;
+    box-shadow: 0 0 8px #F1C40F;
+    animation: pulse 1s infinite;
+}
+
+.node-status.completed {
+    background: #2ECC71;
+    box-shadow: 0 0 5px #2ECC71;
+}
+
+.node-status.error {
+    background: #E74C3C;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+/* Sidebar */
+.sidebar {
+    width: 320px;
+    background: #222;
+    border-left: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    z-index: 30;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #333;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #eee;
+}
+
+.sidebar-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Sidebar Form Elements */
+.prop-group {
+    margin-bottom: 20px;
+}
+
+.prop-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.prop-group input,
+.prop-group select,
+.prop-group textarea {
+    width: 100%;
+    padding: 10px;
+    background: #333;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.prop-group input:focus,
+.prop-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.prop-group textarea {
+    resize: vertical;
+    min-height: 300px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.run-node-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.run-node-btn:hover {
+    opacity: 0.9;
+}
+
+.empty-state {
+    text-align: center;
+    color: #555;
+    margin-top: 100px;
+}
+
+.empty-state i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
