@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Final Report Logic ---
     function showFinalReport() {
         // Collect all outputs
-        let reportHTML = `<div style="padding:20px; color:white;"><h2>🎬 채널 생성 결과 리포트</h2><hr style="border-color:#444;">`;
+        let reportHTML = `<div style="padding:20px; color:#ddd;">`;
 
         nodes.forEach(node => {
             if (node.output) {
