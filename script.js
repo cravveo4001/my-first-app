@@ -1261,14 +1261,13 @@ ${userInfoText}
 
             const submitBtn = contactForm.querySelector('.submit-btn');
             const statusMsg = document.getElementById('contact-status');
-            const savedUrl = localStorage.getItem(STORAGE_KEYS.formspreeUrl);
+
+            // Use the form's action attribute directly (hardcoded in HTML)
+            const formspreeUrl = contactForm.getAttribute('action') || localStorage.getItem(STORAGE_KEYS.formspreeUrl);
 
             // 1. URL 설정 확인
-            if (!savedUrl) {
-                alert('⚠️ 문의 기능을 사용하려면 설정에서 Formspree URL을 먼저 등록해야 합니다.\n설정 창으로 이동합니다.');
-                contactModal.classList.add('hidden');
-                apiSettingsPanel.classList.remove('hidden');
-                if (formspreeInput) formspreeInput.focus();
+            if (!formspreeUrl) {
+                alert('⚠️ 문의 기능이 설정되지 않았습니다. 관리자에게 문의하세요.');
                 return;
             }
 
@@ -1281,7 +1280,7 @@ ${userInfoText}
             const formData = new FormData(contactForm);
 
             try {
-                const response = await fetch(savedUrl, {
+                const response = await fetch(formspreeUrl, {
                     method: 'POST',
                     body: formData,
                     headers: {
