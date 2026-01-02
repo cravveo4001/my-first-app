@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Workflow Studio (Factory Mode)</title>
+    <title>TubeKit AI - Channel Factory</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
     <!-- Open Graph -->
@@ -26,10 +26,32 @@
     <!-- Header -->
     <header>
         <div class="logo-area">
+            <a href="/" style="color:white; margin-right:15px; text-decoration:none;">
+                <i class="fas fa-arrow-left"></i> Home (TubeKit AI)
+            </a>
             <i class="fas fa-network-wired"></i>
             <span>Channel Factory <span class="badge">PRO</span></span>
         </div>
         <div class="actions">
+            <button id="api-settings-btn" style="
+                background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+                border: 1px solid #444;
+                color: #b2bec3;
+                padding: 8px 16px;
+                border-radius: 20px;
+                margin-right: 15px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            " onmouseover="this.style.borderColor='#667eea'; this.style.color='white'; this.style.boxShadow='0 0 10px rgba(102, 126, 234, 0.3)'"
+                onmouseout="this.style.borderColor='#444'; this.style.color='#b2bec3'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.2)'">
+                <i class="fas fa-cog"></i> API 설정
+            </button>
+            <div id="google_translate_element" style="margin-right: 15px;"></div>
             <span class="status-text" id="status-indicator">준비 완료</span>
             <button class="btn-primary" id="run-workflow-btn"><i class="fas fa-play"></i> Run Factory</button>
         </div>
@@ -112,10 +134,105 @@
         </div>
     </div>
 
+    <!-- API Settings Modal -->
+    <div id="api-modal" class="modal hidden">
+        <div class="modal-content" style="background: #2D2D2D; color: #EEE; border: 1px solid #444;">
+            <div class="modal-header" style="border-bottom: 1px solid #444;">
+                <h3>🔑 API 키 설정</h3>
+                <button type="button" class="modal-close" id="close-api-modal" style="color: #AAA;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; color: #AAA; margin-bottom: 20px;">
+                    입력한 API 키는 브라우저 로컬 스토리지에 안전하게 저장되며, 서버로 전송되지 않습니다.
+                </p>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #4aaef5;">🤖 Gemini API Key</label>
+                    <input type="password" id="gemini-key" placeholder="AIza..."
+                        style="width: 100%; padding: 8px; background: #333; border: 1px solid #555; color: white; border-radius: 4px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #19c37d;">💬 ChatGPT API Key</label>
+                    <input type="password" id="chatgpt-key" placeholder="sk-..."
+                        style="width: 100%; padding: 8px; background: #333; border: 1px solid #555; color: white; border-radius: 4px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: #d97757;">🧠 Claude API Key</label>
+                    <input type="password" id="claude-key" placeholder="sk-ant-..."
+                        style="width: 100%; padding: 8px; background: #333; border: 1px solid #555; color: white; border-radius: 4px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button id="save-api-keys" class="btn-primary" style="background: #4aaef5;">저장하기</button>
+                    <button id="clear-api-keys" class="btn-secondary"
+                        style="background: #e74c3c; border: none; color: white;">초기화</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared Styles for Modal (Quick Inject) -->
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: #2D2D2D;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+
     <!-- API Client (Shared) -->
     <script src="api-client.js"></script>
     <!-- Core Engine -->
     <script src="workflow.js"></script>
+
+    <!-- Google Translate Widget -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'ko',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

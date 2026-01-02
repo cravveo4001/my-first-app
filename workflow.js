@@ -421,51 +421,101 @@ document.addEventListener('DOMContentLoaded', () => {
         headerActions.appendChild(reportBtn);
     }
 
+    // --- API Key Management (Workflow Specific) ---
+    const apiModal = document.getElementById('api-modal');
+    const apiSettingsBtn = document.getElementById('api-settings-btn');
+    const closeApiModalBtn = document.getElementById('close-api-modal');
+    const saveApiKeysBtn = document.getElementById('save-api-keys');
+    const clearApiKeysBtn = document.getElementById('clear-api-keys');
+
+    const geminiInput = document.getElementById('gemini-key');
+    const chatgptInput = document.getElementById('chatgpt-key');
+    const claudeInput = document.getElementById('claude-key');
+
+    // Open Modal logic
+    apiSettingsBtn.onclick = () => {
+        const keys = APIClient.getSavedApiKeys(); // uses api-client.js shared logic
+        geminiInput.value = keys.gemini;
+        chatgptInput.value = keys.chatgpt;
+        claudeInput.value = keys.claude;
+        apiModal.classList.remove('hidden');
+    };
+
+    // Close Modal logic
+    closeApiModalBtn.onclick = () => {
+        apiModal.classList.add('hidden');
+    };
+
+    // Save Keys logic
+    saveApiKeysBtn.onclick = () => {
+        localStorage.setItem('youtube_recommender_gemini_key', geminiInput.value.trim());
+        localStorage.setItem('youtube_recommender_chatgpt_key', chatgptInput.value.trim());
+        localStorage.setItem('youtube_recommender_claude_key', claudeInput.value.trim());
+        alert('✅ API 키가 저장되었습니다. 모든 공정에 적용됩니다.');
+        apiModal.classList.add('hidden');
+    };
+
+    // Clear Keys logic
+    clearApiKeysBtn.onclick = () => {
+        if (confirm('모든 API 키를 삭제하시겠습니까?')) {
+            localStorage.removeItem('youtube_recommender_gemini_key');
+            localStorage.removeItem('youtube_recommender_chatgpt_key');
+            localStorage.removeItem('youtube_recommender_claude_key');
+            geminiInput.value = '';
+            chatgptInput.value = '';
+            claudeInput.value = '';
+            alert('🗑️ API 키가 초기화되었습니다.');
+        }
+    };
+
     // --- Init: The Factory Mega-Chain ---
     const urlParams = new URLSearchParams(window.location.search);
     const initialTopic = urlParams.get('topic');
 
-    if (initialTopic) {
-        // Layout: 3 Columns
-        // Col 1: Identity (Name -> Handle -> Target)
-        // Col 2: Visuals (Profile -> Banner)
-        // Col 3: Content (Research -> Meta -> Script)
+    // Always load the full factory chain
+    // Layout: 3 Columns
+    // Col 1: Identity (Name -> Handle -> Target)
+    // Col 2: Visuals (Profile -> Banner)
+    // Col 3: Content (Research -> Meta -> Script)
 
-        // Shifted right by +250px to avoid toolbar overlay
-        const c1x = 350, c2x = 750, c3x = 1150, c4x = 1550;
-        const startY = 100, gapY = 250;
+    // Shifted right by +250px to avoid toolbar overlay
+    const c1x = 350, c2x = 750, c3x = 1150, c4x = 1550;
+    const startY = 100, gapY = 250;
 
-        // Nodes
-        const n1 = new Node('channel-name', c1x, startY); n1.data.topic = initialTopic;
-        const n2 = new Node('channel-handle', c1x, startY + gapY);
-        const n3 = new Node('target-audience', c1x, startY + gapY * 2);
-        n3.data.topic = initialTopic; // Fix: Explicitly set topic for n3
+    // Nodes
+    const n1 = new Node('channel-name', c1x, startY);
+    if (initialTopic) n1.data.topic = initialTopic;
 
-        const n4 = new Node('profile-pic', c2x, startY);
-        const n5 = new Node('banner-image', c2x, startY + gapY);
+    const n2 = new Node('channel-handle', c1x, startY + gapY);
+    const n3 = new Node('target-audience', c1x, startY + gapY * 2);
+    if (initialTopic) n3.data.topic = initialTopic;
 
-        const n6 = new Node('topic-research', c3x, startY); n6.data.topic = initialTopic;
-        const n7 = new Node('video-metadata', c3x, startY + gapY);
-        const n8 = new Node('script-gen', c3x, startY + gapY * 2);
+    const n4 = new Node('profile-pic', c2x, startY);
+    const n5 = new Node('banner-image', c2x, startY + gapY);
 
-        const n9 = new Node('translator', c4x, startY + gapY);
+    const n6 = new Node('topic-research', c3x, startY);
+    if (initialTopic) n6.data.topic = initialTopic;
 
-        [n1, n2, n3, n4, n5, n6, n7, n8, n9].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
+    const n7 = new Node('video-metadata', c3x, startY + gapY);
+    const n8 = new Node('script-gen', c3x, startY + gapY * 2);
 
-        // Connections
-        connectNodes(n1, n2); // Name -> Handle
-        connectNodes(n1, n3); // Name -> Target
+    const n9 = new Node('translator', c4x, startY + gapY);
 
-        connectNodes(n1, n4); // Name -> Profile
-        connectNodes(n1, n5); // Name -> Banner
+    [n1, n2, n3, n4, n5, n6, n7, n8, n9].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
 
-        connectNodes(n3, n6); // Target -> Research
-        connectNodes(n6, n7); // Research -> Meta
-        connectNodes(n7, n8); // Meta -> Script
+    // Connections
+    connectNodes(n1, n2); // Name -> Handle
+    connectNodes(n1, n3); // Name -> Target
 
-        connectNodes(n8, n9); // Script -> Translate
+    connectNodes(n1, n4); // Name -> Profile
+    connectNodes(n1, n5); // Name -> Banner
 
-        selectNode(n1);
-        updateCanvasTransform();
-    }
+    connectNodes(n3, n6); // Target -> Research
+    connectNodes(n6, n7); // Research -> Meta
+    connectNodes(n7, n8); // Meta -> Script
+
+    connectNodes(n8, n9); // Script -> Translate
+
+    selectNode(n1);
+    updateCanvasTransform();
 });

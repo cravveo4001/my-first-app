@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- Elements (Guard Clauses applied below) ---
     const form = document.getElementById('recommendation-form');
     const resultSection = document.getElementById('result-section');
     const geminiResult = document.getElementById('gemini-result');
     const chatgptResult = document.getElementById('chatgpt-result');
     const claudeResult = document.getElementById('claude-result');
     const submitBtn = document.getElementById('submit-btn');
-    const btnText = submitBtn.querySelector('.btn-text');
-    const btnLoading = submitBtn.querySelector('.btn-loading');
+    const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+    const btnLoading = submitBtn ? submitBtn.querySelector('.btn-loading') : null;
 
     // API 설정 관련 요소
     const usageBadge = document.getElementById('usage-badge');
@@ -91,40 +92,48 @@ document.addEventListener('DOMContentLoaded', function () {
         const keys = getSavedApiKeys();
         const hasKeys = hasUserApiKeys();
 
-        if (hasKeys) {
-            usageText.textContent = '🔑 나만의 API 키 사용 중';
-            usageBadge.classList.remove('exhausted');
-        } else if (remaining > 0) {
-            usageText.textContent = `무료 사용 가능: ${remaining}회 남음`;
-            usageBadge.classList.remove('exhausted');
-        } else {
-            usageText.textContent = '⚠️ 무료 사용 횟수 소진됨';
-            usageBadge.classList.add('exhausted');
+        if (usageText) {
+            if (hasKeys) {
+                usageText.textContent = '🔑 나만의 API 키 사용 중';
+                usageBadge.classList.remove('exhausted');
+            } else if (remaining > 0) {
+                usageText.textContent = `무료 사용 가능: ${remaining}회 남음`;
+                usageBadge.classList.remove('exhausted');
+            } else {
+                usageText.textContent = '⚠️ 무료 사용 횟수 소진됨';
+                usageBadge.classList.add('exhausted');
+            }
         }
 
         // API 키 입력 필드에 기존 값 표시 (마스킹)
-        if (keys.gemini) {
-            geminiApiKeyInput.placeholder = '•••••••••• (저장됨)';
-            geminiApiKeyInput.classList.add('has-key');
-        } else {
-            geminiApiKeyInput.placeholder = 'AIza로 시작하는 키';
-            geminiApiKeyInput.classList.remove('has-key');
+        if (geminiApiKeyInput) {
+            if (keys.gemini) {
+                geminiApiKeyInput.placeholder = '•••••••••• (저장됨)';
+                geminiApiKeyInput.classList.add('has-key');
+            } else {
+                geminiApiKeyInput.placeholder = 'AIza로 시작하는 키';
+                geminiApiKeyInput.classList.remove('has-key');
+            }
         }
 
-        if (keys.chatgpt) {
-            chatgptApiKeyInput.placeholder = '•••••••••• (저장됨)';
-            chatgptApiKeyInput.classList.add('has-key');
-        } else {
-            chatgptApiKeyInput.placeholder = 'sk-로 시작하는 키';
-            chatgptApiKeyInput.classList.remove('has-key');
+        if (chatgptApiKeyInput) {
+            if (keys.chatgpt) {
+                chatgptApiKeyInput.placeholder = '•••••••••• (저장됨)';
+                chatgptApiKeyInput.classList.add('has-key');
+            } else {
+                chatgptApiKeyInput.placeholder = 'sk-로 시작하는 키';
+                chatgptApiKeyInput.classList.remove('has-key');
+            }
         }
 
-        if (keys.claude) {
-            claudeApiKeyInput.placeholder = '•••••••••• (저장됨)';
-            claudeApiKeyInput.classList.add('has-key');
-        } else {
-            claudeApiKeyInput.placeholder = 'sk-ant-로 시작하는 키';
-            claudeApiKeyInput.classList.remove('has-key');
+        if (claudeApiKeyInput) {
+            if (keys.claude) {
+                claudeApiKeyInput.placeholder = '•••••••••• (저장됨)';
+                claudeApiKeyInput.classList.add('has-key');
+            } else {
+                claudeApiKeyInput.placeholder = 'sk-ant-로 시작하는 키';
+                claudeApiKeyInput.classList.remove('has-key');
+            }
         }
 
         if (keys.youtube && youtubeApiKeyInput) {
@@ -137,60 +146,66 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // API 설정 패널 토글
-    apiSettingsBtn.addEventListener('click', function () {
-        apiSettingsPanel.classList.toggle('hidden');
-    });
+    if (apiSettingsBtn) {
+        apiSettingsBtn.addEventListener('click', function () {
+            apiSettingsPanel.classList.toggle('hidden');
+        });
+    }
 
     // API 키 저장
-    saveApiKeysBtn.addEventListener('click', function () {
-        const newKeys = {
-            gemini: geminiApiKeyInput.value.trim(),
-            chatgpt: chatgptApiKeyInput.value.trim(),
-            claude: claudeApiKeyInput.value.trim(),
-            youtube: youtubeApiKeyInput ? youtubeApiKeyInput.value.trim() : '',
-            formspree: document.getElementById('formspree-url') ? document.getElementById('formspree-url').value.trim() : '' // 추가
-        };
+    if (saveApiKeysBtn) {
+        saveApiKeysBtn.addEventListener('click', function () {
+            const newKeys = {
+                gemini: geminiApiKeyInput.value.trim(),
+                chatgpt: chatgptApiKeyInput.value.trim(),
+                claude: claudeApiKeyInput.value.trim(),
+                youtube: youtubeApiKeyInput ? youtubeApiKeyInput.value.trim() : '',
+                formspree: document.getElementById('formspree-url') ? document.getElementById('formspree-url').value.trim() : '' // 추가
+            };
 
-        // 빈 값은 기존 키 유지
-        const existingKeys = getSavedApiKeys();
-        const keysToSave = {
-            gemini: newKeys.gemini || existingKeys.gemini,
-            chatgpt: newKeys.chatgpt || existingKeys.chatgpt,
-            claude: newKeys.claude || existingKeys.claude,
-            youtube: newKeys.youtube || existingKeys.youtube,
-            formspree: newKeys.formspree || existingKeys.formspree // 추가
-        };
+            // 빈 값은 기존 키 유지
+            const existingKeys = getSavedApiKeys();
+            const keysToSave = {
+                gemini: newKeys.gemini || existingKeys.gemini,
+                chatgpt: newKeys.chatgpt || existingKeys.chatgpt,
+                claude: newKeys.claude || existingKeys.claude,
+                youtube: newKeys.youtube || existingKeys.youtube,
+                formspree: newKeys.formspree || existingKeys.formspree // 추가
+            };
 
-        saveApiKeys(keysToSave);
+            saveApiKeys(keysToSave);
 
-        // Formspree URL 저장 (별도 키)
-        if (keysToSave.formspree && !keysToSave.formspree.startsWith('http')) {
-            // URL 형식이 아니면 경고? (일단 저장)
-        }
-        if (keysToSave.formspree) localStorage.setItem(STORAGE_KEYS.formspreeUrl, keysToSave.formspree);
+            // Formspree URL 저장 (별도 키)
+            if (keysToSave.formspree && !keysToSave.formspree.startsWith('http')) {
+                // URL 형식이 아니면 경고? (일단 저장)
+            }
+            if (keysToSave.formspree) localStorage.setItem(STORAGE_KEYS.formspreeUrl, keysToSave.formspree);
 
-        // 입력 필드 클리어
-        geminiApiKeyInput.value = '';
-        chatgptApiKeyInput.value = '';
-        claudeApiKeyInput.value = '';
-        if (youtubeApiKeyInput) youtubeApiKeyInput.value = '';
-        if (document.getElementById('formspree-url')) document.getElementById('formspree-url').value = ''; // 추가
-
-        updateUsageDisplay();
-        alert('✅ API 키가 저장되었습니다!');
-    });
-
-    // API 키 초기화
-    clearApiKeysBtn.addEventListener('click', function () {
-        if (confirm('정말 모든 API 키를 삭제하시겠습니까?')) {
-            clearSavedApiKeys();
+            // 입력 필드 클리어
             geminiApiKeyInput.value = '';
             chatgptApiKeyInput.value = '';
             claudeApiKeyInput.value = '';
+            if (youtubeApiKeyInput) youtubeApiKeyInput.value = '';
+            if (document.getElementById('formspree-url')) document.getElementById('formspree-url').value = ''; // 추가
+
             updateUsageDisplay();
-            alert('🗑️ API 키가 삭제되었습니다.');
-        }
-    });
+            alert('✅ API 키가 저장되었습니다!');
+        });
+    }
+
+    // API 키 초기화
+    if (clearApiKeysBtn) {
+        clearApiKeysBtn.addEventListener('click', function () {
+            if (confirm('정말 모든 API 키를 삭제하시겠습니까?')) {
+                clearSavedApiKeys();
+                geminiApiKeyInput.value = '';
+                chatgptApiKeyInput.value = '';
+                claudeApiKeyInput.value = '';
+                updateUsageDisplay();
+                alert('🗑️ API 키가 삭제되었습니다.');
+            }
+        });
+    }
 
     // 프롬프트 생성
     function createPrompt(userInfo) {
@@ -454,131 +469,133 @@ ${userInfoText}
     }
 
     // 폼 제출 이벤트
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
+    if (form) {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-        const keys = getSavedApiKeys();
-        const usingFreeQuota = isUsingFreeQuota();
-
-        // 무료 사용 불가 + API 키 하나도 없으면 경고
-        if (!usingFreeQuota && !keys.gemini && !keys.chatgpt && !keys.claude) {
-            alert('⚠️ 무료 사용 횟수가 소진되었습니다.\n\nAPI 키 설정에서 최소 1개의 API 키를 입력해주세요.');
-            apiSettingsPanel.classList.remove('hidden');
-            return;
-        }
-
-        const userInfo = {
-            ageGroup: document.getElementById('age-group').value,
-            gender: document.getElementById('gender').value,
-            region: document.getElementById('region').value,
-            category: document.getElementById('category').value,
-            style: document.getElementById('style').value,
-            duration: document.getElementById('duration').value,
-            interest: document.getElementById('interest').value
-        };
-
-        const prompt = createPrompt(userInfo);
-
-        setLoading(true);
-        resultSection.classList.remove('hidden');
-
-        // 무료 사용: Gemini만 제공 / ChatGPT, Claude는 사용자 API 키 필요
-        const canUseGemini = usingFreeQuota || keys.gemini;
-        const canUseChatGPT = keys.chatgpt;  // 사용자 API 키 필수
-        const canUseClaude = keys.claude;    // 사용자 API 키 필수
-
-        // 각 결과 영역 초기화
-        geminiResult.innerHTML = canUseGemini ? createLoadingHTML() : createNoKeyHTML('Gemini');
-        chatgptResult.innerHTML = canUseChatGPT ? createLoadingHTML() : createNoKeyHTML('ChatGPT');
-        claudeResult.innerHTML = canUseClaude ? createLoadingHTML() : createNoKeyHTML('Claude');
-
-        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        // 무료 사용 횟수 증가 (서버 기본 키 사용 시에만)
-        if (usingFreeQuota && !hasUserApiKeys()) {
-            incrementUsageCount();
-        }
-
-        const promises = [];
-        const allResults = { gemini: null, chatgpt: null, claude: null };
-
-        // Gemini 호출
-        if (canUseGemini) {
-            promises.push(
-                callAPI('gemini', prompt, usingFreeQuota && !keys.gemini)
-                    .then(response => {
-                        const recommendations = parseAIResponse(response);
-                        geminiResult.innerHTML = createResultHTML(recommendations);
-                        allResults.gemini = recommendations.map(r => r.topic).join(', ');
-                    })
-                    .catch(error => {
-                        console.error('Gemini API Error:', error);
-                        geminiResult.innerHTML = createErrorHTML(error.message);
-                    })
-            );
-        }
-
-        // ChatGPT 호출
-        if (canUseChatGPT) {
-            promises.push(
-                callAPI('chatgpt', prompt, false)
-                    .then(response => {
-                        const recommendations = parseAIResponse(response);
-                        chatgptResult.innerHTML = createResultHTML(recommendations);
-                        allResults.chatgpt = recommendations.map(r => r.topic).join(', ');
-                    })
-                    .catch(error => {
-                        console.error('ChatGPT API Error:', error);
-                        chatgptResult.innerHTML = createErrorHTML(error.message);
-                    })
-            );
-        }
-
-        // Claude 호출
-        if (canUseClaude) {
-            promises.push(
-                callAPI('claude', prompt, false)
-                    .then(response => {
-                        const recommendations = parseAIResponse(response);
-                        claudeResult.innerHTML = createResultHTML(recommendations);
-                        allResults.claude = recommendations.map(r => r.topic).join(', ');
-                    })
-                    .catch(error => {
-                        console.error('Claude API Error:', error);
-                        claudeResult.innerHTML = createErrorHTML(error.message);
-                    })
-            );
-        }
-
-        // 호출한 API들이 모두 완료되면 로딩 해제 및 결과 저장
-        await Promise.all(promises);
-        setLoading(false);
-
-        // 결과 저장 (히스토리/즐겨찾기용)
-        const resultTexts = [];
-        if (allResults.gemini) resultTexts.push(allResults.gemini);
-        if (allResults.chatgpt) resultTexts.push(allResults.chatgpt);
-        if (allResults.claude) resultTexts.push(allResults.claude);
-
-        if (resultTexts.length > 0) {
-            window.currentRecommendations = {
-                title: `${userInfo.category || '일반'} 추천`,
-                content: resultTexts.join(' | ').substring(0, 200) + (resultTexts.join(' | ').length > 200 ? '...' : '')
-            };
-            // 히스토리에 자동 저장
-            window.saveToHistoryAuto && window.saveToHistoryAuto(window.currentRecommendations);
-
-            // 모든 AI 결과에 대해 YouTube API로 실제 채널 검색
             const keys = getSavedApiKeys();
-            if (keys.youtube) {
-                setTimeout(() => {
-                    if (geminiResult && allResults.gemini) addYouTubeChannelsToCards(geminiResult, userInfo.category);
-                    if (chatgptResult && allResults.chatgpt) addYouTubeChannelsToCards(chatgptResult, userInfo.category);
-                    if (claudeResult && allResults.claude) addYouTubeChannelsToCards(claudeResult, userInfo.category);
-                }, 500);
+            const usingFreeQuota = isUsingFreeQuota();
+
+            // 무료 사용 불가 + API 키 하나도 없으면 경고
+            if (!usingFreeQuota && !keys.gemini && !keys.chatgpt && !keys.claude) {
+                alert('⚠️ 무료 사용 횟수가 소진되었습니다.\n\nAPI 키 설정에서 최소 1개의 API 키를 입력해주세요.');
+                apiSettingsPanel.classList.remove('hidden');
+                return;
             }
-        }
-    });
+
+            const userInfo = {
+                ageGroup: document.getElementById('age-group').value,
+                gender: document.getElementById('gender').value,
+                region: document.getElementById('region').value,
+                category: document.getElementById('category').value,
+                style: document.getElementById('style').value,
+                duration: document.getElementById('duration').value,
+                interest: document.getElementById('interest').value
+            };
+
+            const prompt = createPrompt(userInfo);
+
+            setLoading(true);
+            resultSection.classList.remove('hidden');
+
+            // 무료 사용: Gemini만 제공 / ChatGPT, Claude는 사용자 API 키 필요
+            const canUseGemini = usingFreeQuota || keys.gemini;
+            const canUseChatGPT = keys.chatgpt;  // 사용자 API 키 필수
+            const canUseClaude = keys.claude;    // 사용자 API 키 필수
+
+            // 각 결과 영역 초기화
+            geminiResult.innerHTML = canUseGemini ? createLoadingHTML() : createNoKeyHTML('Gemini');
+            chatgptResult.innerHTML = canUseChatGPT ? createLoadingHTML() : createNoKeyHTML('ChatGPT');
+            claudeResult.innerHTML = canUseClaude ? createLoadingHTML() : createNoKeyHTML('Claude');
+
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // 무료 사용 횟수 증가 (서버 기본 키 사용 시에만)
+            if (usingFreeQuota && !hasUserApiKeys()) {
+                incrementUsageCount();
+            }
+
+            const promises = [];
+            const allResults = { gemini: null, chatgpt: null, claude: null };
+
+            // Gemini 호출
+            if (canUseGemini) {
+                promises.push(
+                    callAPI('gemini', prompt, usingFreeQuota && !keys.gemini)
+                        .then(response => {
+                            const recommendations = parseAIResponse(response);
+                            geminiResult.innerHTML = createResultHTML(recommendations);
+                            allResults.gemini = recommendations.map(r => r.topic).join(', ');
+                        })
+                        .catch(error => {
+                            console.error('Gemini API Error:', error);
+                            geminiResult.innerHTML = createErrorHTML(error.message);
+                        })
+                );
+            }
+
+            // ChatGPT 호출
+            if (canUseChatGPT) {
+                promises.push(
+                    callAPI('chatgpt', prompt, false)
+                        .then(response => {
+                            const recommendations = parseAIResponse(response);
+                            chatgptResult.innerHTML = createResultHTML(recommendations);
+                            allResults.chatgpt = recommendations.map(r => r.topic).join(', ');
+                        })
+                        .catch(error => {
+                            console.error('ChatGPT API Error:', error);
+                            chatgptResult.innerHTML = createErrorHTML(error.message);
+                        })
+                );
+            }
+
+            // Claude 호출
+            if (canUseClaude) {
+                promises.push(
+                    callAPI('claude', prompt, false)
+                        .then(response => {
+                            const recommendations = parseAIResponse(response);
+                            claudeResult.innerHTML = createResultHTML(recommendations);
+                            allResults.claude = recommendations.map(r => r.topic).join(', ');
+                        })
+                        .catch(error => {
+                            console.error('Claude API Error:', error);
+                            claudeResult.innerHTML = createErrorHTML(error.message);
+                        })
+                );
+            }
+
+            // 호출한 API들이 모두 완료되면 로딩 해제 및 결과 저장
+            await Promise.all(promises);
+            setLoading(false);
+
+            // 결과 저장 (히스토리/즐겨찾기용)
+            const resultTexts = [];
+            if (allResults.gemini) resultTexts.push(allResults.gemini);
+            if (allResults.chatgpt) resultTexts.push(allResults.chatgpt);
+            if (allResults.claude) resultTexts.push(allResults.claude);
+
+            if (resultTexts.length > 0) {
+                window.currentRecommendations = {
+                    title: `${userInfo.category || '일반'} 추천`,
+                    content: resultTexts.join(' | ').substring(0, 200) + (resultTexts.join(' | ').length > 200 ? '...' : '')
+                };
+                // 히스토리에 자동 저장
+                window.saveToHistoryAuto && window.saveToHistoryAuto(window.currentRecommendations);
+
+                // 모든 AI 결과에 대해 YouTube API로 실제 채널 검색
+                const keys = getSavedApiKeys();
+                if (keys.youtube) {
+                    setTimeout(() => {
+                        if (geminiResult && allResults.gemini) addYouTubeChannelsToCards(geminiResult, userInfo.category);
+                        if (chatgptResult && allResults.chatgpt) addYouTubeChannelsToCards(chatgptResult, userInfo.category);
+                        if (claudeResult && allResults.claude) addYouTubeChannelsToCards(claudeResult, userInfo.category);
+                    }, 500);
+                }
+            }
+        });
+    }
 
     // 추천 카드에 YouTube 채널 추가
     async function addYouTubeChannelsToCards(container, category) {
