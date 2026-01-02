@@ -67,6 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
         'translator': {
             name: '9. 번역기 (Global)', icon: 'fa-language', color: '#A06CD5',
             props: [{ id: 'lang', label: '타겟 언어', type: 'select', options: ['영어', '일본어', '스페인어'] }]
+        },
+
+        // Settings Group
+        'settings-general': {
+            name: '⚙️ 일반 설정', icon: 'fa-cog', color: '#95A5A6',
+            props: [{ id: 'currency', label: '기준 통화', type: 'select', options: ['KRW - 대한민국 원', 'USD - 미국 달러'] }]
+        },
+        'settings-channel': {
+            name: 'ℹ️ 채널 정보', icon: 'fa-info-circle', color: '#BDC3C7',
+            props: [{ id: 'country', label: '거주 국가', type: 'select', options: ['대한민국', '미국', '일본'] }]
+        },
+        'settings-upload': {
+            name: '📤 업로드 기본값', icon: 'fa-upload', color: '#7F8C8D',
+            props: [{ id: 'visibility', label: '공개 상태', type: 'select', options: ['공개', '비공개', '일부 공개'] }]
         }
     };
 
@@ -301,13 +315,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 prompt = `주제 '${upstreamTopic}'의 주요 타겟 시청자층(연령, 성별, 관심사)을 페르소나 형태로 분석해줘.`;
                 break;
             case 'profile-pic':
-                prompt = `채널 분위기에 맞는 유튜브 프로필 사진(로고)을 생성하기 위한 심플하고 명확한 영문 프롬프트를 작성해줘. 
-                (형식: "A minimalist logo of...", 설명 없이 프롬프트만 출력)
-                스타일: ${node.data.vibe || '모던'}`;
+                prompt = `채널 분위기(${node.data.vibe || '모던'})에 맞는 유튜브 프로필 사진(로고)을 생성하기 위한 고품질 영문 프롬프트를 작성해줘. 
+                (형식: "High quality, vector art logo of..., minimalist, professional color palette, 4k", 설명 없이 프롬프트만 출력)`;
                 break;
             case 'banner-image':
-                prompt = `유튜브 채널 아트(배너)를 생성하기 위한 고화질 영문 프롬프트를 작성해줘. 
-                (형식: "Wide banner image showing...", 설명 없이 프롬프트만 출력)`;
+                prompt = `유튜브 채널 아트(배너)를 생성하기 위한 시네마틱하고 화려한 고화질 영문 프롬프트를 작성해줘. 
+                (형식: "Cinematic wide banner showing..., detailed, 8k resolution, trending on artstation, vivid colors", 설명 없이 프롬프트만 출력)`;
                 break;
             case 'topic-research':
                 prompt = `주제 '${topic}'과 관련하여 현재 유튜브에서 조회수가 잘 나오는 킬러 콘텐츠 아이디어 5개를 분석해줘.`; break;
@@ -317,6 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 prompt = `선정된 영상의 인트로-본론-아웃트로 대본을 작성해줘. 길이: ${node.data.duration}`; break;
             case 'translator':
                 prompt = `위의 모든 내용을 ${node.data.lang || '영어'}로 번역해줘.`; break;
+            case 'settings-general':
+                // Static Info basically, but we can ask AI for confirmation/tips
+                prompt = `유튜브 수익 창출 시 '${node.data.currency}' 통화 설정의 장단점과 세금 관련 간단한 팁을 한 문장으로 알려줘.`; break;
+            case 'settings-channel':
+                prompt = `주제 '${topic}'에 적합한 유튜브 채널 키워드(태그) 20개를 쉼표로 구분해서 추천해줘. SEO에 강력한 키워드 위주로.`; break;
+            case 'settings-upload':
+                prompt = `주제 '${topic}' 영상 업로드 시 '설명' 란에 항상 들어갈 기본 템플릿(인사말, 구독요청, 면책조항, 추천 해시태그 등)을 작성해줘.`; break;
             default:
                 prompt = `다음 내용을 바탕으로 인사이트를 제공해줘:\n${context}`;
         }
@@ -327,16 +347,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const aiType = node.data.model || 'gemini';
             const result = await APIClient.callAPI(aiType, prompt, false);
 
-            // Image Generation Logic (Pollinations.ai)
+            // Image Generation Logic (Removed by User Request)
+            // Just output the high-quality prompt
             if (node.type === 'profile-pic' || node.type === 'banner-image') {
                 const cleanPrompt = result.replace(/['"]/g, '').trim();
-                const encoded = encodeURIComponent(cleanPrompt);
-                // Random seed for variety
-                const seed = Math.floor(Math.random() * 1000);
-                const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?nologo=true&seed=${seed}`;
+                node.output = `**[미드저니/DALL-E용 프롬프트]**\n\n${cleanPrompt}\n\nRunning... (이미지 생성은 지원하지 않음)`;
 
-                // Store both prompt and image HTML
-                node.output = `**프롬프트:** ${cleanPrompt}\n\n**생성된 이미지:**\n<img src="${imageUrl}" style="max-width:100%; border-radius:8px; margin-top:10px;">`;
+                // Add a "Copy" UI for convenience
+                node.output = `**🎨 이미지 생성 프롬프트**\n(미드저니, DALL-E 등에 붙여넣기 하세요)\n\n\`\`\`\n${cleanPrompt}\n\`\`\``;
             } else {
                 node.output = result;
             }
@@ -612,21 +630,20 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelWiring(); // Clean up temp line
     }
 
-    // --- Init: The Factory Mega-Chain ---
+    // --- Init: The Factory Mega-Chain (Simplified by User Request) ---
+    // Focus only on "Channel Creation" (Identity + Visuals)
+
+    // Layout: 2 Columns
+    // Col 1: Identity (Name -> Handle -> Target)
+    // Col 2: Visuals (Profile -> Banner)
+
     const urlParams = new URLSearchParams(window.location.search);
     const initialTopic = urlParams.get('topic');
 
-    // Always load the full factory chain
-    // Layout: 3 Columns
-    // Col 1: Identity (Name -> Handle -> Target)
-    // Col 2: Visuals (Profile -> Banner)
-    // Col 3: Content (Research -> Meta -> Script)
-
-    // Shifted right by +250px to avoid toolbar overlay
-    const c1x = 350, c2x = 750, c3x = 1150, c4x = 1550;
+    const c1x = 350, c2x = 750, c3x = 1150;
     const startY = 100, gapY = 250;
 
-    // Nodes
+    // Identity Group
     const n1 = new Node('channel-name', c1x, startY);
     if (initialTopic) n1.data.topic = initialTopic;
 
@@ -634,31 +651,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const n3 = new Node('target-audience', c1x, startY + gapY * 2);
     if (initialTopic) n3.data.topic = initialTopic;
 
+    // Visuals Group
     const n4 = new Node('profile-pic', c2x, startY);
     const n5 = new Node('banner-image', c2x, startY + gapY);
 
-    const n6 = new Node('topic-research', c3x, startY);
-    if (initialTopic) n6.data.topic = initialTopic;
+    // Settings Group (New)
+    const nSet1 = new Node('settings-general', c3x, startY); // General
+    const nSet2 = new Node('settings-channel', c3x, startY + gapY); // Channel Info
+    const nSet3 = new Node('settings-upload', c3x, startY + gapY * 2); // Upload Defaults
 
-    const n7 = new Node('video-metadata', c3x, startY + gapY);
-    const n8 = new Node('script-gen', c3x, startY + gapY * 2);
-
-    const n9 = new Node('translator', c4x, startY + gapY);
-
-    [n1, n2, n3, n4, n5, n6, n7, n8, n9].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
+    // Initial Nodes
+    [n1, n2, n3, n4, n5, nSet1, nSet2, nSet3].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
 
     // Connections
     connectNodes(n1, n2); // Name -> Handle
     connectNodes(n1, n3); // Name -> Target
-
     connectNodes(n1, n4); // Name -> Profile
     connectNodes(n1, n5); // Name -> Banner
 
-    connectNodes(n3, n6); // Target -> Research
-    connectNodes(n6, n7); // Research -> Meta
-    connectNodes(n7, n8); // Meta -> Script
-
-    connectNodes(n8, n9); // Script -> Translate
+    // Connect to Settings (Flow: Target -> Settings)
+    // Connecting Target Audience to Channel Info makes sense (Keywords based on target/topic)
+    connectNodes(n3, nSet2);
+    connectNodes(nSet2, nSet3); // Info -> Upload
+    connectNodes(nSet1, nSet2); // General -> Info (Loosely related)
 
     selectNode(n1);
     updateCanvasTransform();
