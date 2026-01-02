@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPanning = false;
     let dragStartX = 0;
     let dragStartY = 0;
+    // Wiring State
+    let isWiring = false;
+    let wiringStartNode = null;
+    let tempLine = null;
 
     // --- DOM Elements ---
     const canvasContainer = document.getElementById('canvas-container');
@@ -103,8 +107,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="socket input"></div>
                 <div class="socket output"></div>
             `;
+            // Bind Events
             el.addEventListener('mousedown', (e) => startDragNode(e, this));
             el.addEventListener('click', (e) => { e.stopPropagation(); selectNode(this); });
+
+            // Socket Events
+            const outSocket = el.querySelector('.socket.output');
+            outSocket.addEventListener('mousedown', (e) => startWiring(e, this));
+
+            const inSocket = el.querySelector('.socket.input');
+            inSocket.addEventListener('mouseup', (e) => finishWiring(e, this));
+
             return el;
         }
 
@@ -211,7 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <option value="claude" ${node.data.model === 'claude' ? 'selected' : ''}>Claude (Server)</option>
                 </select>
             </div>
-            <div class="prop-actions"><button class="run-node-btn" id="btn-run-${node.id}">실행 (Run)</button></div>
+            <div class="prop-actions" style="display:flex; gap:10px;">
+                <button class="run-node-btn" id="btn-run-${node.id}" style="flex:1;">실행 (Run)</button>
+                <button class="run-node-btn" id="btn-delete-${node.id}" style="flex:0.4; background:#E74C3C;">삭제</button>
+            </div>
             <hr style="border-top:1px solid #444; margin:15px 0;">
         `;
 
@@ -233,7 +249,34 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('prop-model').addEventListener('change', (e) => node.data.model = e.target.value);
         document.getElementById('prop-output').addEventListener('input', (e) => { node.output = e.target.value; node.updateSummary(); });
         document.getElementById(`btn-run-${node.id}`).addEventListener('click', () => executeNode(node));
+        document.getElementById(`btn-delete-${node.id}`).addEventListener('click', () => deleteNode(node));
         if (def.props) def.props.forEach(p => document.getElementById(`prop-${p.id}`).addEventListener('input', (e) => { node.data[p.id] = e.target.value; node.updateSummary(); }));
+    }
+
+    function deleteNode(node) {
+        if (!confirm('정말 이 노드를 삭제하시겠습니까?')) return;
+
+        // 1. Remove connections
+        // Find all connections involving this node
+        const relatedConnections = connections.filter(c => c.from === node || c.to === node);
+        relatedConnections.forEach(c => {
+            // We need to remove from 'connections' array. 
+            // Ideally we filter properly or splice.
+            const idx = connections.indexOf(c);
+            if (idx > -1) connections.splice(idx, 1);
+        });
+
+        // 2. Remove node from array
+        const nodeIdx = nodes.indexOf(node);
+        if (nodeIdx > -1) nodes.splice(nodeIdx, 1);
+
+        // 3. Remove from DOM
+        node.element.remove();
+
+        // 4. Update UI
+        updateConnections(); // Redraw lines
+        sidebarContent.innerHTML = '<div class="empty-state"><i class="fas fa-trash-alt"></i><p>노드가 삭제되었습니다.</p></div>';
+        selectedNodeId = null;
     }
 
     async function executeNode(node) {
@@ -467,6 +510,107 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('🗑️ API 키가 초기화되었습니다.');
         }
     };
+
+    // --- Dynamic Drag & Drop Creation (Toolbox) ---
+    toolbarItems.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('nodeType', item.dataset.type);
+            e.dataTransfer.effectAllowed = 'copy';
+        });
+    });
+
+    canvasContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    });
+
+    canvasContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const type = e.dataTransfer.getData('nodeType');
+        if (!type || !NODE_TYPES[type]) return;
+
+        // Calculate drop position relative to canvas pan/scale
+        const rect = canvasContainer.getBoundingClientRect();
+        const x = (e.clientX - rect.left - panX) / scale;
+        const y = (e.clientY - rect.top - panY) / scale;
+
+        const newNode = new Node(type, x, y);
+        nodes.push(newNode);
+        nodesLayer.appendChild(newNode.element);
+        newNode.updateSummary();
+        selectNode(newNode);
+    });
+
+    // --- Manual Wiring Logic ---
+    // 1. Start Wiring (Output Socket)
+    function startWiring(e, node) {
+        e.stopPropagation();
+        isWiring = true;
+        wiringStartNode = node;
+
+        // Create Temp Line
+        tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        tempLine.setAttribute('stroke', '#FFD700');
+        tempLine.setAttribute('stroke-width', '3');
+        tempLine.setAttribute('fill', 'none');
+        tempLine.setAttribute('stroke-dasharray', '5,5');
+        tempLine.style.pointerEvents = 'none'; // CRITICAL: Prevent line from stealing mouseup event from socket
+        connectionsLayer.appendChild(tempLine);
+
+        document.addEventListener('mousemove', onWiringMove);
+        document.addEventListener('mouseup', onWiringEnd);
+    }
+
+    function onWiringMove(e) {
+        if (!isWiring) return;
+        const rect = canvasContainer.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left - panX) / scale;
+        const mouseY = (e.clientY - rect.top - panY) / scale;
+
+        const startX = wiringStartNode.x + 260; // Output is on right
+        const startY = wiringStartNode.y + 40;
+
+        // Bezier curve to mouse
+        const d = `M ${startX} ${startY} C ${startX + 80} ${startY}, ${mouseX - 80} ${mouseY}, ${mouseX} ${mouseY}`;
+        tempLine.setAttribute('d', d);
+    }
+
+    function onWiringEnd(e) {
+        // Cleanup global listeners
+        document.removeEventListener('mousemove', onWiringMove);
+        document.removeEventListener('mouseup', onWiringEnd);
+
+        // If we land here and isWiring is true, it means we missed a valid socket 
+        // (because valid socket would have triggered finishWiring and stopped propagation/cancelled wiring)
+        // UNLESS the tempLine blocked the click.
+        if (isWiring) {
+            cancelWiring();
+        }
+    }
+
+    function cancelWiring() {
+        isWiring = false;
+        wiringStartNode = null;
+        if (tempLine) {
+            tempLine.remove();
+            tempLine = null;
+        }
+    }
+
+    // 2. Finish Wiring (Input Socket)
+    function finishWiring(e, targetNode) {
+        // Critical: Stop propagation so document.mouseup (onWiringEnd) doesn't fire and confusingly cancel logic (though logic is redundant there)
+        e.stopPropagation();
+
+        if (!isWiring || !wiringStartNode) return;
+
+        // Validation
+        if (wiringStartNode === targetNode) { alert('자기 자신에게 연결할 수 없습니다.'); cancelWiring(); return; }
+        if (connections.find(c => c.from === wiringStartNode && c.to === targetNode)) { alert('이미 연결되어 있습니다.'); cancelWiring(); return; }
+
+        connectNodes(wiringStartNode, targetNode);
+        cancelWiring(); // Clean up temp line
+    }
 
     // --- Init: The Factory Mega-Chain ---
     const urlParams = new URLSearchParams(window.location.search);
