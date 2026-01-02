@@ -1832,7 +1832,8 @@ header {
     text-align: center;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    text-decoration: none; /* For anchor tags */
+    text-decoration: none;
+    /* For anchor tags */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1843,21 +1844,21 @@ header {
 .choice-card:hover {
     transform: translateY(-8px);
     background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.6);
 }
 
 .choice-icon {
     font-size: 3.5rem;
     margin-bottom: 20px;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .choice-card h2 {
     font-size: 1.5rem;
     color: white;
     margin-bottom: 15px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .choice-card p {
@@ -1887,7 +1888,8 @@ header {
 
 /* Specific Style for Factory Card to make it pop */
 .factory-card {
-    background: rgba(255, 215, 0, 0.15); /* Slight gold tint */
+    background: rgba(255, 215, 0, 0.15);
+    /* Slight gold tint */
     border: 2px solid rgba(255, 215, 0, 0.4);
 }
 
@@ -1898,7 +1900,8 @@ header {
 }
 
 .factory-card .choice-btn {
-    color: #d69e2e; /* Gold-ish dark */
+    color: #d69e2e;
+    /* Gold-ish dark */
 }
 
 .factory-card:hover .choice-btn {
@@ -1906,12 +1909,33 @@ header {
     color: #333;
 }
 
+/* Video Studio Card (NEW) */
+.video-card {
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid rgba(255, 0, 0, 0.3);
+}
+
+.video-card:hover {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: rgba(255, 0, 0, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 0, 0, 0.15);
+}
+
+.video-card .choice-btn {
+    color: #cc0000;
+}
+
+.video-card:hover .choice-btn {
+    background: #ff0000;
+    color: white;
+}
+
 @media (max-width: 768px) {
     .hero-choices {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .choice-card {
         width: 100%;
         max-width: 340px;

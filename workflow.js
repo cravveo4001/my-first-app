@@ -737,6 +737,16 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelWiring(); // Clean up temp line
     }
 
-    // --- Init: Start in Channel Mode ---
-    initChannelMode();
+    // --- Init: Check URL param for mode ---
+    const initUrlParams = new URLSearchParams(window.location.search);
+    const initialMode = initUrlParams.get('mode') || 'channel';
+
+    if (initialMode === 'video') {
+        currentMode = 'video';
+        document.getElementById('tab-channel').classList.remove('active');
+        document.getElementById('tab-video').classList.add('active');
+        initVideoMode();
+    } else {
+        initChannelMode();
+    }
 });
