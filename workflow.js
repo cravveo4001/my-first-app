@@ -15,6 +15,113 @@ document.addEventListener('DOMContentLoaded', () => {
     let isWiring = false;
     let wiringStartNode = null;
     let tempLine = null;
+    // Mode State (NEW)
+    let currentMode = 'channel'; // 'channel' or 'video'
+
+    // Expose switchMode to global scope for HTML onclick
+    window.switchMode = function (mode) {
+        if (mode === currentMode) return;
+
+        // Save current channel context before switching
+        if (currentMode === 'channel' && mode === 'video') {
+            saveChannelContext();
+        }
+
+        currentMode = mode;
+
+        // Update Tab UI
+        document.getElementById('tab-channel').classList.toggle('active', mode === 'channel');
+        document.getElementById('tab-video').classList.toggle('active', mode === 'video');
+
+        // Clear Canvas
+        nodes.length = 0;
+        connections.length = 0;
+        nodesLayer.innerHTML = '';
+        connectionsLayer.innerHTML = '';
+        nextNodeId = 1;
+
+        // Initialize Mode
+        if (mode === 'channel') {
+            initChannelMode();
+        } else {
+            initVideoMode();
+        }
+    };
+
+    function saveChannelContext() {
+        const context = {};
+        nodes.forEach(n => {
+            if (n.type === 'channel-name' && n.output) context.channelName = n.output.substring(0, 100);
+            if (n.type === 'target-audience' && n.output) context.targetAudience = n.output.substring(0, 200);
+            if (n.data.topic) context.topic = n.data.topic;
+        });
+        localStorage.setItem('tubekit_channel_context', JSON.stringify(context));
+        console.log('Channel context saved:', context);
+    }
+
+    function initVideoMode() {
+        const context = JSON.parse(localStorage.getItem('tubekit_channel_context') || '{}');
+        const topic = context.topic || '(주제 미설정)';
+
+        const c1x = 350, c2x = 750;
+        const startY = 100, gapY = 250;
+
+        // Video Nodes
+        const v1 = new Node('topic-research', c1x, startY);
+        v1.data.topic = topic;
+
+        const v2 = new Node('video-metadata', c1x, startY + gapY);
+        const v3 = new Node('script-gen', c1x, startY + gapY * 2);
+
+        const v4 = new Node('translator', c2x, startY + gapY);
+
+        [v1, v2, v3, v4].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
+
+        connectNodes(v1, v2);
+        connectNodes(v2, v3);
+        connectNodes(v3, v4);
+
+        selectNode(v1);
+        updateCanvasTransform();
+
+        alert(`🎬 영상 스튜디오 모드!\n\n저장된 채널 정보: ${topic}\n\n이제 이 채널에 맞는 영상 아이디어를 기획하세요.`);
+    }
+
+    function initChannelMode() {
+        // Same as original initialization
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialTopic = urlParams.get('topic');
+
+        const c1x = 350, c2x = 750, c3x = 1150;
+        const startY = 100, gapY = 250;
+
+        const n1 = new Node('channel-name', c1x, startY);
+        if (initialTopic) n1.data.topic = initialTopic;
+
+        const n2 = new Node('channel-handle', c1x, startY + gapY);
+        const n3 = new Node('target-audience', c1x, startY + gapY * 2);
+        if (initialTopic) n3.data.topic = initialTopic;
+
+        const n4 = new Node('profile-pic', c2x, startY);
+        const n5 = new Node('banner-image', c2x, startY + gapY);
+
+        const nSet1 = new Node('settings-general', c3x, startY);
+        const nSet2 = new Node('settings-channel', c3x, startY + gapY);
+        const nSet3 = new Node('settings-upload', c3x, startY + gapY * 2);
+
+        [n1, n2, n3, n4, n5, nSet1, nSet2, nSet3].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
+
+        connectNodes(n1, n2);
+        connectNodes(n1, n3);
+        connectNodes(n1, n4);
+        connectNodes(n1, n5);
+        connectNodes(n3, nSet2);
+        connectNodes(nSet2, nSet3);
+        connectNodes(nSet1, nSet2);
+
+        selectNode(n1);
+        updateCanvasTransform();
+    }
 
     // --- DOM Elements ---
     const canvasContainer = document.getElementById('canvas-container');
@@ -630,51 +737,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelWiring(); // Clean up temp line
     }
 
-    // --- Init: The Factory Mega-Chain (Simplified by User Request) ---
-    // Focus only on "Channel Creation" (Identity + Visuals)
-
-    // Layout: 2 Columns
-    // Col 1: Identity (Name -> Handle -> Target)
-    // Col 2: Visuals (Profile -> Banner)
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialTopic = urlParams.get('topic');
-
-    const c1x = 350, c2x = 750, c3x = 1150;
-    const startY = 100, gapY = 250;
-
-    // Identity Group
-    const n1 = new Node('channel-name', c1x, startY);
-    if (initialTopic) n1.data.topic = initialTopic;
-
-    const n2 = new Node('channel-handle', c1x, startY + gapY);
-    const n3 = new Node('target-audience', c1x, startY + gapY * 2);
-    if (initialTopic) n3.data.topic = initialTopic;
-
-    // Visuals Group
-    const n4 = new Node('profile-pic', c2x, startY);
-    const n5 = new Node('banner-image', c2x, startY + gapY);
-
-    // Settings Group (New)
-    const nSet1 = new Node('settings-general', c3x, startY); // General
-    const nSet2 = new Node('settings-channel', c3x, startY + gapY); // Channel Info
-    const nSet3 = new Node('settings-upload', c3x, startY + gapY * 2); // Upload Defaults
-
-    // Initial Nodes
-    [n1, n2, n3, n4, n5, nSet1, nSet2, nSet3].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
-
-    // Connections
-    connectNodes(n1, n2); // Name -> Handle
-    connectNodes(n1, n3); // Name -> Target
-    connectNodes(n1, n4); // Name -> Profile
-    connectNodes(n1, n5); // Name -> Banner
-
-    // Connect to Settings (Flow: Target -> Settings)
-    // Connecting Target Audience to Channel Info makes sense (Keywords based on target/topic)
-    connectNodes(n3, nSet2);
-    connectNodes(nSet2, nSet3); // Info -> Upload
-    connectNodes(nSet1, nSet2); // General -> Info (Loosely related)
-
-    selectNode(n1);
-    updateCanvasTransform();
+    // --- Init: Start in Channel Mode ---
+    initChannelMode();
 });
