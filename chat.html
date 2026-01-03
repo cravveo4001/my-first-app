@@ -431,6 +431,7 @@ ${conversationHistory.map(m => `${m.role === 'user' ? '사용자' : 'AI'}: ${m.c
                     contents: [{
                         parts: [{ text: systemPrompt + '\n\n현재 사용자 메시지: ' + userMessage }]
                     }],
+                    tools: [{ googleSearch: {} }],
                     generationConfig: {
                         temperature: 0.8,
                         maxOutputTokens: 1024
