@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startY = 100, gapY = 250;
 
         // 1. Try to restore from LocalStorage
-        const savedState = JSON.parse(localStorage.getItem('tubekit_channel_workflow') || 'null');
+        const savedState = JSON.parse(localStorage.getItem('tubekit_workflow_channel') || 'null');
 
         if (savedState && savedState.nodes) {
             // Restore nodes
