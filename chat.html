@@ -370,7 +370,17 @@
         // Force Recommendation Logic
         if (forceRecommendBtn) {
             forceRecommendBtn.addEventListener('click', async () => {
-                const userMessage = "이제 충분해. 지금까지 내용으로 바로 채널을 추천해줘. [RECOMMENDATION] 형식으로 출력해.";
+                let userMessage = "";
+                const currentInput = chatInput.value.trim();
+
+                if (conversationHistory.length === 0 && !currentInput) {
+                    // 맥락이 아예 없을 때 (랜덤 추천 모드)
+                    userMessage = "나 아직 아무 말도 안 했는데 그냥 추천받고 싶어. 완전히 랜덤하고 창의적인 유튜브 채널 아이디어를 하나 추천해줘. '요리'나 '브이로그' 같은 뻔한 거 말고, 아주 독특한 걸로 부탁해. [RECOMMENDATION] 형식으로 바로 출력해.";
+                } else {
+                    // 맥락이 있을 때
+                    const contextInput = currentInput ? ` (추가 요청: ${currentInput})` : "";
+                    userMessage = `이제 충분해. 지금까지 내용${contextInput}을 바탕으로 바로 채널을 추천해줘. [RECOMMENDATION] 형식으로 출력해.`;
+                }
 
                 // Add user message (visually)
                 addMessage("⚡ 바로 추천해주세요!", true);
