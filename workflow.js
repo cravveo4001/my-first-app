@@ -582,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateConnections(); // Redraw lines
         sidebarContent.innerHTML = '<div class="empty-state"><i class="fas fa-trash-alt"></i><p>노드가 삭제되었습니다.</p></div>';
         selectedNodeId = null;
+        saveWorkflowState(); // 저장: 삭제 상태 반영
     }
 
     async function executeNode(node) {
