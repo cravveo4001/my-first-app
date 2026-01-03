@@ -22,25 +22,29 @@ document.addEventListener('DOMContentLoaded', () => {
     window.switchMode = function (mode) {
         if (mode === currentMode) return;
 
-        // Save current channel context before switching
+        // 1. 현재 모드 상태 저장 (데이터 유실 방지)
+        saveWorkflowState();
+
+        // 2. 채널 -> 영상 전환 시 컨텍스트 별도 저장
         if (currentMode === 'channel' && mode === 'video') {
             saveChannelContext();
         }
 
-        currentMode = mode;
-
-        // Update Tab UI
-        document.getElementById('tab-channel').classList.toggle('active', mode === 'channel');
-        document.getElementById('tab-video').classList.toggle('active', mode === 'video');
-
-        // Clear Canvas
+        // 3. 캔버스 및 데이터 초기화 (모드 변경 전에 수행)
         nodes.length = 0;
         connections.length = 0;
         nodesLayer.innerHTML = '';
         connectionsLayer.innerHTML = '';
-        nextNodeId = 1;
+        nextNodeId = 1; // ID는 저장된 데이터 로드 시 재조정되므로 1로 리셋해도 무방하나, 로드 로직에서 max값 찾음.
 
-        // Initialize Mode
+        // 4. 모드 변경
+        currentMode = mode;
+
+        // 5. 탭 UI 업데이트
+        document.getElementById('tab-channel').classList.toggle('active', mode === 'channel');
+        document.getElementById('tab-video').classList.toggle('active', mode === 'video');
+
+        // 6. 새 모드 초기화 (로드)
         if (mode === 'channel') {
             initChannelMode();
         } else {
