@@ -24,6 +24,8 @@
             text-align: center;
             margin-bottom: 30px;
             color: white;
+            position: relative;
+            /* 버튼 절대 위치 기준점 */
         }
 
         .chat-header h1 {
@@ -284,7 +286,7 @@
     </nav>
 
     <div class="chat-container">
-        <div class="chat-header">
+        <div class="chat-header" style="position: relative;">
             <div class="header-controls">
                 <button class="header-btn" onclick="openApiModal()">🔑 API 설정</button>
                 <button class="header-btn reset" onclick="resetChat()">🗑️ 대화 초기화</button>
@@ -295,15 +297,7 @@
 
         <div class="chat-box">
             <div class="chat-messages" id="chat-messages">
-                <!-- Initial bot message -->
-                <div class="message bot">
-                    <div class="avatar">🤖</div>
-                    <div class="content">
-                        안녕하세요! TubeKit AI 채널 상담사입니다. 😊<br><br>
-                        어떤 유튜브 채널을 만들고 싶으신가요? 자유롭게 말씀해주세요!<br><br>
-                        <em>예: "요리 채널을 만들고 싶어요" 또는 "우리 서비스를 홍보하고 싶어요"</em>
-                    </div>
-                </div>
+                <!-- JS로 초기 메시지 추가됨 -->
             </div>
 
             <div class="suggestion-chips" id="suggestion-chips">
