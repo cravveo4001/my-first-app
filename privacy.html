@@ -9,28 +9,98 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.cravveo.com/privacy.html">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .legal-container {
+            max-width: 800px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .legal-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .legal-header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .legal-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .legal-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .legal-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .legal-section h2 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .legal-section p,
+        .legal-section li {
+            color: #555;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .legal-section ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .notice {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="page-container">
-        <!-- 헤더 -->
-        <header class="page-header">
-            <nav class="page-nav">
-                <a href="/" class="nav-logo">🎬 TubeKit AI</a>
-                <div class="nav-links">
-                    <a href="/">홈</a>
-                    <a href="/about.html">소개</a>
-                    <a href="/privacy.html" class="active">개인정보처리방침</a>
-                    <div id="google_translate_element" style="display:inline-block;margin-left:10px;"></div>
-                </div>
-            </nav>
-        </header>
+<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+    <!-- 네비게이션 (Unified) -->
+    <nav class="navbar" style="top: 0;">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🛠️ TubeKit AI</a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/about.html" class="nav-link">소개</a>
+                <a href="/guide.html" class="nav-link">📖 사용법</a>
+                <button type="button" class="nav-link nav-btn" onclick="alert('문의하기는 메인 페이지에서 이용해주세요!')">📞
+                    문의하기</button>
+            </div>
+            <div id="google_translate_element" class="nav-translate"></div>
+        </div>
+    </nav>
 
-        <!-- 메인 콘텐츠 -->
-        <main class="page-content legal-content">
+    <div class="legal-container">
+        <div class="legal-header">
             <h1>📋 개인정보처리방침</h1>
-            <p class="last-updated">최종 수정일: 2025년 1월 1일</p>
+            <p>최종 수정일: 2025년 1월 1일</p>
+        </div>
 
+        <div class="legal-card">
             <section class="legal-section">
                 <h2>1. 개인정보의 수집 및 이용 목적</h2>
                 <p>TubeKit AI(이하 "서비스")은 다음의 목적을 위해 개인정보를 처리합니다:</p>
@@ -55,7 +125,7 @@
                 <h2>3. 개인정보의 보관 및 파기</h2>
                 <ul>
                     <li>입력 정보: 실시간 처리 후 즉시 삭제 (보관하지 않음)</li>
-                    <li>API 키: 사용자의 브라우저 로컬 스토리지에만 저장 (서버 전송 없음)</li>
+                    <li>API 키: 사용자의 브라우저 로컬 스토리지에만 저장</li>
                     <li>방문 통계: 익명화된 형태로 처리</li>
                 </ul>
             </section>
@@ -68,12 +138,10 @@
                     <li>OpenAI (ChatGPT API)</li>
                     <li>Anthropic (Claude API)</li>
                 </ul>
-                <p>각 서비스의 개인정보처리방침은 해당 사이트에서 확인하실 수 있습니다.</p>
             </section>
 
             <section class="legal-section">
                 <h2>5. 쿠키 사용</h2>
-                <p>서비스는 다음과 같은 목적으로 쿠키 및 로컬 스토리지를 사용합니다:</p>
                 <ul>
                     <li>언어 설정 저장</li>
                     <li>무료 사용 횟수 관리</li>
@@ -83,7 +151,6 @@
 
             <section class="legal-section">
                 <h2>6. 이용자의 권리</h2>
-                <p>이용자는 다음과 같은 권리를 행사할 수 있습니다:</p>
                 <ul>
                     <li>브라우저 데이터 삭제를 통한 저장 정보 삭제</li>
                     <li>쿠키 차단 설정</li>
@@ -93,22 +160,21 @@
 
             <section class="legal-section">
                 <h2>7. 문의처</h2>
-                <p>개인정보 관련 문의가 있으시면 아래로 연락해 주세요:</p>
                 <p>📧 이메일: cravveo@gmail.com</p>
             </section>
-        </main>
-
-        <!-- 푸터 -->
-        <footer class="page-footer">
-            <div class="footer-links">
-                <a href="/">홈</a>
-                <a href="/about.html">소개</a>
-                <a href="/privacy.html">개인정보처리방침</a>
-                <a href="/terms.html">이용약관</a>
-            </div>
-            <p class="copyright">© 2025 TubeKit AI. All rights reserved.</p>
-        </footer>
+        </div>
     </div>
+
+    <footer class="site-footer" style="margin-top: 40px;">
+        <div class="footer-nav">
+            <a href="/">홈</a>
+            <a href="/about.html">소개</a>
+            <a href="/privacy.html">개인정보처리방침</a>
+            <a href="/terms.html">이용약관</a>
+        </div>
+        <p class="copyright">© 2025 TubeKit AI</p>
+    </footer>
+
     <!-- Google Translate Widget -->
     <script type="text/javascript">
         function googleTranslateElementInit() {

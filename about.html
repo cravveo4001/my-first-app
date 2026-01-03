@@ -9,107 +9,246 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.cravveo.com/about.html">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .about-container {
+            max-width: 900px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .about-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .about-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .about-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .about-card h2 {
+            color: #333;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .about-card p {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .feature-item .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-item h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .feature-item p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .ai-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .ai-card {
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .ai-card.gemini {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+        }
+
+        .ai-card.chatgpt {
+            background: linear-gradient(135deg, #10a37f, #1a7f64);
+        }
+
+        .ai-card.claude {
+            background: linear-gradient(135deg, #cc785c, #b8654a);
+        }
+
+        .ai-card h3 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .ai-card p {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            color: white;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .ai-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
-<body>
-    <div class="page-container">
-        <!-- 네비게이션 (Unified) -->
-        <nav class="navbar" style="position: relative; top: 0;">
-            <div class="nav-container">
-                <a href="/" class="nav-logo">🛠️ TubeKit AI</a>
-                <div class="nav-menu">
-                    <a href="/" class="nav-link">홈</a>
-                    <a href="/about.html" class="nav-link active">소개</a>
-                    <a href="/guide.html" class="nav-link">📖 사용법</a>
-                    <button type="button" class="nav-link nav-btn" onclick="alert('문의하기는 메인 페이지에서 이용해주세요!')">📞
-                        문의하기</button>
-                </div>
-                <div id="google_translate_element" class="nav-translate"></div>
+<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+    <!-- 네비게이션 (Unified) -->
+    <nav class="navbar" style="top: 0;">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🛠️ TubeKit AI</a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/about.html" class="nav-link active">소개</a>
+                <a href="/guide.html" class="nav-link">📖 사용법</a>
+                <button type="button" class="nav-link nav-btn" onclick="alert('문의하기는 메인 페이지에서 이용해주세요!')">📞
+                    문의하기</button>
             </div>
-        </nav>
+            <div id="google_translate_element" class="nav-translate"></div>
+        </div>
+    </nav>
 
-        <!-- 메인 콘텐츠 -->
-        <main class="page-content">
-            <section class="about-hero">
-                <h1>🤖 TubeKit AI 서비스</h1>
-                <p class="hero-subtitle">세계 최고의 AI 기술로 당신만의 콘텐츠를 찾아드립니다</p>
-            </section>
+    <div class="about-container">
+        <div class="about-header">
+            <h1>🤖 TubeKit AI 소개</h1>
+            <p>세계 최고의 AI 기술로 당신만의 콘텐츠를 찾아드립니다</p>
+        </div>
 
-            <section class="about-section">
-                <h2>📌 서비스 소개</h2>
-                <p>
-                    TubeKit AI은 <strong>Google Gemini</strong>, <strong>OpenAI ChatGPT</strong>, <strong>Anthropic
-                        Claude</strong>
-                    3개의 세계 최고 AI 기술을 활용하여 사용자에게 최적의 유튜브 채널을 추천하는 무료 웹 서비스입니다.
-                </p>
-                <p>
-                    기존 유튜브 알고리즘의 한계를 넘어, 사용자가 직접 입력한 취향과 선호도를 기반으로
-                    진정으로 당신에게 맞는 채널을 찾아드립니다.
-                </p>
-            </section>
+        <!-- 서비스 소개 -->
+        <div class="about-card">
+            <h2>📌 서비스 소개</h2>
+            <p>
+                TubeKit AI은 <strong>Google Gemini</strong>, <strong>OpenAI ChatGPT</strong>, <strong>Anthropic
+                    Claude</strong>
+                3개의 세계 최고 AI 기술을 활용하여 사용자에게 최적의 유튜브 채널을 추천하는 무료 웹 서비스입니다.
+            </p>
+            <p style="margin-top: 15px;">
+                기존 유튜브 알고리즘의 한계를 넘어, 사용자가 직접 입력한 취향과 선호도를 기반으로
+                진정으로 당신에게 맞는 채널을 찾아드립니다.
+            </p>
+        </div>
 
-            <section class="about-section">
-                <h2>⚡ 핵심 기능</h2>
-                <div class="feature-grid">
-                    <div class="about-feature">
-                        <span class="feature-emoji">🎯</span>
-                        <h3>맞춤형 추천</h3>
-                        <p>연령, 성별, 관심사, 콘텐츠 스타일 등을 분석하여 개인화된 채널을 추천합니다.</p>
-                    </div>
-                    <div class="about-feature">
-                        <span class="feature-emoji">🔄</span>
-                        <h3>3개 AI 비교</h3>
-                        <p>Gemini, ChatGPT, Claude 3개 AI의 다양한 관점으로 추천을 받아보세요.</p>
-                    </div>
-                    <div class="about-feature">
-                        <span class="feature-emoji">🔒</span>
-                        <h3>개인정보 보호</h3>
-                        <p>입력 정보는 서버에 저장되지 않으며, 추천 후 즉시 삭제됩니다.</p>
-                    </div>
-                    <div class="about-feature">
-                        <span class="feature-emoji">🌐</span>
-                        <h3>다국어 지원</h3>
-                        <p>한국어, 영어, 일본어, 중국어 4개 언어를 지원합니다.</p>
-                    </div>
+        <!-- 핵심 기능 -->
+        <div class="about-card">
+            <h2>⚡ 핵심 기능</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="icon">🎯</div>
+                    <h3>맞춤형 추천</h3>
+                    <p>연령, 관심사, 콘텐츠 스타일 분석</p>
                 </div>
-            </section>
-
-            <section class="about-section">
-                <h2>🤖 AI 기술 소개</h2>
-                <div class="ai-cards">
-                    <div class="ai-card gemini">
-                        <h3>Google Gemini</h3>
-                        <p>Google DeepMind가 개발한 최신 멀티모달 AI. 방대한 데이터를 기반으로 정확한 추천을 제공합니다.</p>
-                    </div>
-                    <div class="ai-card chatgpt">
-                        <h3>OpenAI ChatGPT</h3>
-                        <p>전 세계에서 가장 널리 사용되는 대화형 AI. 자연스러운 대화와 창의적인 추천이 특징입니다.</p>
-                    </div>
-                    <div class="ai-card claude">
-                        <h3>Anthropic Claude</h3>
-                        <p>최신 AI 안전 기술을 적용한 차세대 AI. 신중하고 균형 잡힌 추천을 제공합니다.</p>
-                    </div>
+                <div class="feature-item">
+                    <div class="icon">🔄</div>
+                    <h3>3개 AI 비교</h3>
+                    <p>다양한 관점의 추천</p>
                 </div>
-            </section>
-
-            <section class="about-section cta-section">
-                <h2>💡 지금 바로 시작하세요</h2>
-                <p>무료로 TubeKit AI을 받아보세요!</p>
-                <a href="/" class="cta-button">채널 추천 받기 →</a>
-            </section>
-        </main>
-
-        <!-- 푸터 -->
-        <footer class="page-footer">
-            <div class="footer-links">
-                <a href="/">홈</a>
-                <a href="/about.html">소개</a>
-                <a href="/privacy.html">개인정보처리방침</a>
-                <a href="/terms.html">이용약관</a>
+                <div class="feature-item">
+                    <div class="icon">🔒</div>
+                    <h3>개인정보 보호</h3>
+                    <p>서버 저장 없이 즉시 삭제</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🌐</div>
+                    <h3>다국어 지원</h3>
+                    <p>한/영/일/중 4개 언어</p>
+                </div>
             </div>
-            <p class="copyright">© 2025 TubeKit AI. All rights reserved.</p>
-        </footer>
+        </div>
+
+        <!-- AI 기술 소개 -->
+        <div class="about-card">
+            <h2>🤖 AI 기술 소개</h2>
+            <div class="ai-cards">
+                <div class="ai-card gemini">
+                    <h3>Google Gemini</h3>
+                    <p>Google DeepMind의 최신 AI. 방대한 데이터 기반 정확한 추천.</p>
+                </div>
+                <div class="ai-card chatgpt">
+                    <h3>OpenAI ChatGPT</h3>
+                    <p>전 세계 가장 인기 있는 대화형 AI. 창의적인 추천.</p>
+                </div>
+                <div class="ai-card claude">
+                    <h3>Anthropic Claude</h3>
+                    <p>AI 안전 기술 적용. 신중하고 균형 잡힌 추천.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="about-card cta-section">
+            <h2>💡 지금 바로 시작하세요</h2>
+            <p>무료로 TubeKit AI를 이용해보세요!</p>
+            <a href="/" class="cta-button">채널 추천 받기 →</a>
+        </div>
     </div>
+
+    <footer class="site-footer" style="margin-top: 40px;">
+        <div class="footer-nav">
+            <a href="/">홈</a>
+            <a href="/about.html">소개</a>
+            <a href="/privacy.html">개인정보처리방침</a>
+            <a href="/terms.html">이용약관</a>
+        </div>
+        <p class="copyright">© 2025 TubeKit AI</p>
+    </footer>
+
     <!-- Google Translate Widget -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
