@@ -557,7 +557,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function executeNode(node) {
-        node.status = 'running'; node.updateSummary(); renderProperties(node);
+        // 시작 시 로딩 메시지 표시 및 저장
+        node.status = 'running';
+        node.output = "AI가 아이디어를 생성하고 있습니다... ⏳\n(잠시만 기다려주세요)";
+        node.updateSummary();
+        renderProperties(node);
+        saveWorkflowState(); // Running 상태 저장
 
         // 1. Context Collection
         const incoming = connections.filter(c => c.to === node);
