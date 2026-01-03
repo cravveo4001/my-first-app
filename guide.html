@@ -142,16 +142,18 @@
 </head>
 
 <body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
-    <!-- 네비게이션 -->
+    <!-- 네비게이션 (Unified) -->
     <nav class="navbar" style="top: 0;">
         <div class="nav-container">
             <a href="/" class="nav-logo">🛠️ TubeKit AI</a>
             <div class="nav-menu">
                 <a href="/" class="nav-link">홈</a>
                 <a href="/about.html" class="nav-link">소개</a>
-                <a href="/guide.html" class="nav-link active">사용법</a>
-                <a href="/#faq-section" class="nav-link">FAQ</a>
+                <a href="/guide.html" class="nav-link active">📖 사용법</a>
+                <button type="button" class="nav-link nav-btn" onclick="alert('문의하기는 메인 페이지에서 이용해주세요!')">📞
+                    문의하기</button>
             </div>
+            <div id="google_translate_element" class="nav-translate"></div>
         </div>
     </nav>
 
