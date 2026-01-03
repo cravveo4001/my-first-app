@@ -382,9 +382,9 @@
                 // 맥락이 있거나 입력값이 있는 경우 -> 강제 추천 요청
                 let userMessage;
                 if (currentInput) {
-                    userMessage = `지금까지 대화 내용과 추가 요청('${currentInput}')을 종합해서, 가장 적합한 유튜브 채널을 바로 추천해줘. [RECOMMENDATION] 형식으로 즉시 출력해.`;
+                    userMessage = `[긴급 요청] 상담 종료. 추가 요청사항('${currentInput}')을 반영하여, 지금까지의 대화 내용을 바탕으로 즉시 결과를 출력해. 더 이상 질문하지 마. 부족한 정보는 알아서 추론해. [RECOMMENDATION] 형식으로 바로 내놔.`;
                 } else {
-                    userMessage = "지금까지 나눈 대화를 바탕으로 결론을 내려줘. 가장 적합한 유튜브 채널을 바로 추천해줘. [RECOMMENDATION] 형식으로 즉시 출력해.";
+                    userMessage = "[긴급 요청] 상담 종료. 더 이상 질문하지 말고, 지금까지 모은 정보만으로 즉시 유튜브 채널을 추천해. 정보가 부족하면 네가 알아서 채워. 무조건 [RECOMMENDATION] 형식으로 결과만 출력해.";
                 }
 
                 // Add user message (visually) but keep it simple
