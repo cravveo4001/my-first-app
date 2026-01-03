@@ -31,9 +31,44 @@
             margin-bottom: 10px;
         }
 
+
+
         .chat-header p {
             opacity: 0.9;
             font-size: 1rem;
+        }
+
+        /* API & Reset Buttons */
+        .header-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-btn.reset {
+            background: rgba(255, 80, 80, 0.6);
+            border-color: rgba(255, 80, 80, 0.8);
+        }
+
+        .header-btn.reset:hover {
+            background: rgba(255, 80, 80, 0.8);
         }
 
         .chat-box {
@@ -250,6 +285,10 @@
 
     <div class="chat-container">
         <div class="chat-header">
+            <div class="header-controls">
+                <button class="header-btn" onclick="openApiModal()">🔑 API 설정</button>
+                <button class="header-btn reset" onclick="resetChat()">🗑️ 대화 초기화</button>
+            </div>
             <h1>💬 AI 채널 상담사</h1>
             <p>어떤 유튜브 채널을 만들고 싶은지 자유롭게 이야기해주세요!</p>
         </div>
@@ -411,6 +450,7 @@
 
                     conversationHistory.push({ role: 'user', content: userMessage });
                     conversationHistory.push({ role: 'assistant', content: response });
+                    saveChatHistory(); // Save
 
                 } catch (error) {
                     hideTyping();
@@ -422,6 +462,83 @@
 
         let conversationHistory = [];
         let channelRecommendation = null;
+
+        // --- Persistence Logic ---
+        function saveChatHistory() {
+            localStorage.setItem('tubekit_chat_history', JSON.stringify(conversationHistory));
+        }
+
+        function loadChatHistory() {
+            const saved = localStorage.getItem('tubekit_chat_history');
+            if (saved) {
+                conversationHistory = JSON.parse(saved);
+                // Restore visual messages
+                chatMessages.innerHTML = '';
+                // Add initial greeting if history is empty (handled by logic below)
+
+                conversationHistory.forEach(msg => {
+                    if (msg.role === 'user') addMessage(msg.content, true);
+                    else {
+                        // Check if it's a recommendation card
+                        if (msg.content.includes('[RECOMMENDATION]')) {
+                            const parts = msg.content.split('[RECOMMENDATION]');
+                            if (parts[0].length < 20) addMessage(parts[0]);
+                            const rec = parseRecommendation(parts[1]);
+                            addRecommendationCard(rec);
+                        } else {
+                            addMessage(msg.content);
+                        }
+                    }
+                });
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else {
+                // Initialize default greeting if no history
+                addMessage(`안녕하세요! TubeKit AI 채널 상담사입니다. 😊<br><br>어떤 유튜브 채널을 만들고 싶으신가요? 자유롭게 말씀해주세요!<br><br>예: "요리 채널을 만들고 싶어요" 또는 "우리 서비스를 홍보하고 싶어요"`, false);
+            }
+        }
+
+        function resetChat() {
+            if (!confirm('대화 내용을 모두 삭제하고 새로 시작하시겠습니까?')) return;
+            conversationHistory = [];
+            localStorage.removeItem('tubekit_chat_history');
+            chatMessages.innerHTML = '';
+            addMessage(`안녕하세요! TubeKit AI 채널 상담사입니다. 😊<br><br>어떤 유튜브 채널을 만들고 싶으신가요? 자유롭게 말씀해주세요!<br><br>예: "요리 채널을 만들고 싶어요" 또는 "우리 서비스를 홍보하고 싶어요"`, false);
+        }
+
+        // --- API Modal Logic ---
+        function openApiModal() {
+            const modal = document.getElementById('api-modal');
+            const input = document.getElementById('api-key-input');
+            const storedKey = localStorage.getItem('youtube_recommender_gemini_key');
+            if (storedKey) input.value = storedKey;
+            modal.style.display = 'flex';
+        }
+
+        function closeApiModal() {
+            document.getElementById('api-modal').style.display = 'none';
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (!key) { alert('API 키를 입력해주세요.'); return; }
+            localStorage.setItem('youtube_recommender_gemini_key', key);
+            alert('저장되었습니다!');
+            closeApiModal();
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChatHistory();
+
+            // Check API Key
+            if (!localStorage.getItem('youtube_recommender_gemini_key')) {
+                // Delay slightly to let UI render
+                setTimeout(() => openApiModal(), 500);
+            }
+        });
+
 
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
@@ -494,6 +611,7 @@
                 }
 
                 conversationHistory.push({ role: 'assistant', content: response });
+                saveChatHistory(); // Save
 
             } catch (error) {
                 hideTyping();
@@ -513,7 +631,9 @@
             let apiKey = localStorage.getItem(STORAGE_KEYS.gemini);
 
             if (!apiKey) {
-                return '⚠️ API 키가 설정되지 않았습니다.<br><br>먼저 <a href="/recommender.html" style="color:#667eea;">이곳</a>에서 Gemini API 키를 설정해주세요!';
+                // API 키가 없으면 모달 띄우기 (링크 대신)
+                openApiModal();
+                return '⚠️ API 키가 필요합니다. 화면에 뜬 창에 키를 입력해주세요!';
             }
 
             let systemPrompt;
@@ -641,6 +761,27 @@ AI: 타겟은 자취생이겠네요? 영상 스타일은 정보 전달 위주인
     </script>
     <script type="text/javascript"
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- API Key Modal -->
+    <div id="api-modal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; justify-content:center; align-items:center;">
+        <div
+            style="background:#2d3436; padding:30px; border-radius:12px; width:400px; color:white; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <h2 style="margin-top:0; margin-bottom: 10px;">🔑 API Key 설정</h2>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Gemini API 키를 입력해주세요.<br>입력된 키는 브라우저에만 저장됩니다.
+            </p>
+            <input type="password" id="api-key-input" placeholder="Enter Gemini API Key"
+                style="width:100%; padding:12px; margin-bottom:20px; border-radius:6px; border:1px solid #444; background:#1a1a1a; color:white; box-sizing: border-box;">
+            <div style="display:flex; justify-content:center; gap:10px;">
+                <button onclick="saveApiKey()"
+                    style="background:#6c5ce7; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:bold;">저장하기</button>
+                <button onclick="closeApiModal()"
+                    style="background:#636e72; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">닫기</button>
+            </div>
+            <p style="margin-top:20px; font-size:0.8rem;"><a href="https://aistudio.google.com/app/apikey"
+                    target="_blank" style="color:#74b9ff; text-decoration: none;">💎 키 발급받기 (Google AI Studio)</a></p>
+        </div>
+    </div>
 </body>
 
 </html>
