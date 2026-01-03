@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Try to restore from LocalStorage
         const savedState = JSON.parse(localStorage.getItem('tubekit_workflow_video') || 'null');
 
-        if (savedState && savedState.nodes && savedState.nodes.length > 0) {
+        if (savedState && savedState.nodes) {
             // Restore nodes
             savedState.nodes.forEach(nData => {
                 const n = new Node(nData.type, nData.x, nData.y);
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Try to restore from LocalStorage
         const savedState = JSON.parse(localStorage.getItem('tubekit_channel_workflow') || 'null');
 
-        if (savedState && savedState.nodes && savedState.nodes.length > 0) {
+        if (savedState && savedState.nodes) {
             // Restore nodes
             savedState.nodes.forEach(nData => {
                 const n = new Node(nData.type, nData.x, nData.y);
