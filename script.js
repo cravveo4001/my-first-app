@@ -1317,4 +1317,48 @@ ${userInfoText}
         });
     }
 
+    // --- 온보딩 팝업 (첫 방문자용) ---
+    const ONBOARDING_KEY = 'tubekit_visited';
+    const onboardingModal = document.getElementById('onboarding-modal');
+    const onboardingStart = document.getElementById('onboarding-start');
+    const onboardingSkip = document.getElementById('onboarding-skip');
+
+    // 첫 방문인지 확인
+    if (onboardingModal && !localStorage.getItem(ONBOARDING_KEY)) {
+        // 첫 방문! 팝업 표시
+        setTimeout(() => {
+            onboardingModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }, 500);
+    }
+
+    // "시작하기" 버튼
+    if (onboardingStart) {
+        onboardingStart.addEventListener('click', () => {
+            localStorage.setItem(ONBOARDING_KEY, 'true');
+            onboardingModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // "다시 보지 않기" 버튼
+    if (onboardingSkip) {
+        onboardingSkip.addEventListener('click', () => {
+            localStorage.setItem(ONBOARDING_KEY, 'true');
+            onboardingModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // 모달 배경 클릭 시 닫기
+    if (onboardingModal) {
+        onboardingModal.addEventListener('click', (e) => {
+            if (e.target === onboardingModal) {
+                localStorage.setItem(ONBOARDING_KEY, 'true');
+                onboardingModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
 });

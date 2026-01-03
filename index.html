@@ -65,6 +65,7 @@
             <div class="nav-menu">
                 <a href="/" class="nav-link active">홈</a>
                 <a href="/about.html" class="nav-link">소개</a>
+                <a href="/guide.html" class="nav-link">📖 사용법</a>
                 <a href="#faq-section" class="nav-link">FAQ</a>
                 <button type="button" class="nav-link nav-btn" id="contact-btn">📞 문의하기</button>
                 <button type="button" class="nav-link nav-btn" id="favorites-btn">⭐ 즐겨찾기</button>
@@ -324,6 +325,62 @@
                     <p id="contact-status"
                         style="margin-top: 10px; font-size: 0.8rem; text-align: center; color: #666;"></p>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 온보딩 팝업 (첫 방문자용) -->
+    <div id="onboarding-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px 12px 0 0; padding: 20px;">
+                <h3 style="margin: 0;">👋 TubeKit AI에 오신 것을 환영합니다!</h3>
+            </div>
+            <div class="modal-body" style="padding: 25px;">
+                <p style="font-size: 1rem; color: #444; margin-bottom: 20px;">
+                    처음이시군요! 간단히 사용법을 알려드릴게요.
+                </p>
+
+                <div
+                    style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; align-items: flex-start;">
+                    <span style="font-size: 1.2rem;">1️⃣</span>
+                    <div>
+                        <strong>아이디어 찾기</strong><br>
+                        <span style="font-size: 0.9rem; color: #666;">뭘 해야 할지 모르겠다면? AI가 주제를 추천!</span>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; align-items: flex-start;">
+                    <span style="font-size: 1.2rem;">2️⃣</span>
+                    <div>
+                        <strong>채널 스튜디오</strong><br>
+                        <span style="font-size: 0.9rem; color: #666;">채널명, 로고, 설정을 한 번에 만들기!</span>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-bottom: 20px; padding: 12px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; align-items: flex-start;">
+                    <span style="font-size: 1.2rem;">3️⃣</span>
+                    <div>
+                        <strong>영상 스튜디오</strong><br>
+                        <span style="font-size: 0.9rem; color: #666;">영상 아이디어부터 대본까지!</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button id="onboarding-start"
+                        style="flex: 1; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">
+                        시작하기! 🚀
+                    </button>
+                </div>
+                <p style="text-align: center; margin-top: 15px;">
+                    <a href="/guide.html" style="font-size: 0.85rem; color: #667eea;">📖 자세한 사용법 보기</a>
+                    &nbsp;|&nbsp;
+                    <button id="onboarding-skip"
+                        style="font-size: 0.85rem; color: #999; background: none; border: none; cursor: pointer;">다시 보지
+                        않기</button>
+                </p>
             </div>
         </div>
     </div>

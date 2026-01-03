@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TubeKit AI | 사용 가이드</title>
+    <meta name="description" content="TubeKit AI 사용법 가이드 - 유튜브 채널 추천부터 채널 생성까지 3단계로 쉽게!">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .guide-container {
+            max-width: 900px;
+            margin: 120px auto 60px;
+            padding: 0 20px;
+        }
+
+        .guide-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .guide-header h1 {
+            font-size: 2.2rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .guide-header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .guide-step {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h2 {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-content p {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .step-content .step-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .step-content .step-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .step-tip {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .guide-faq {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .guide-faq h2 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .guide-faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .guide-faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .guide-faq-item strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .guide-step {
+                flex-direction: column;
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+    <!-- 네비게이션 -->
+    <nav class="navbar" style="top: 0;">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🛠️ TubeKit AI</a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/about.html" class="nav-link">소개</a>
+                <a href="/guide.html" class="nav-link active">사용법</a>
+                <a href="/#faq-section" class="nav-link">FAQ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1>📖 TubeKit AI 사용법</h1>
+            <p>3단계로 나만의 유튜브 채널을 완성하세요!</p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="guide-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h2>🕵️ 아이디어 찾기</h2>
+                <p>
+                    <strong>"뭘 해야 할지 모르겠어요!"</strong> 라면 여기서 시작하세요.<br>
+                    나이, 관심사, 취미를 입력하면 AI가 당신에게 딱 맞는 유튜브 채널 주제를 추천해드립니다.
+                </p>
+                <div class="step-tip">
+                    💡 <strong>팁:</strong> "랜덤 추천" 버튼을 누르면 AI가 무작위로 재밌는 주제를 골라줘요!
+                </div>
+                <br>
+                <a href="/recommender.html" class="step-link">아이디어 찾으러 가기 →</a>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="guide-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h2>📺 채널 스튜디오</h2>
+                <p>
+                    <strong>"주제는 정해졌는데, 채널을 어떻게 만들지?"</strong><br>
+                    채널명, 핸들(@username), 프로필 이미지, 배너 디자인, 채널 설정까지 AI가 한 번에 만들어드립니다.
+                </p>
+                <div class="step-tip">
+                    💡 <strong>팁:</strong> 1단계에서 주제를 선택하면 자동으로 연결됩니다. 직접 주제를 입력해도 OK!
+                </div>
+                <br>
+                <a href="/workflow.html?mode=channel" class="step-link">채널 만들러 가기 →</a>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="guide-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h2>🎬 영상 스튜디오</h2>
+                <p>
+                    <strong>"채널은 있는데, 영상 아이디어가 없어요!"</strong><br>
+                    어떤 영상을 찍을지 모르겠을 때, AI가 트렌드 분석을 통해 영상 주제, 제목, 대본까지 작성해드립니다.
+                </p>
+                <div class="step-tip">
+                    💡 <strong>팁:</strong> 이미 채널이 있다면, 바로 3단계로 오셔도 됩니다!
+                </div>
+                <br>
+                <a href="/workflow.html?mode=video" class="step-link">영상 기획하러 가기 →</a>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="guide-faq">
+            <h2>❓ 자주 묻는 질문</h2>
+
+            <div class="guide-faq-item">
+                <strong>Q. 무료인가요?</strong><br>
+                네! 기본 기능은 모두 무료입니다. Gemini AI는 하루 3회까지 무료로 사용 가능해요.
+            </div>
+
+            <div class="guide-faq-item">
+                <strong>Q. API 키가 뭐예요?</strong><br>
+                AI 서비스를 무제한으로 쓰려면 본인의 API 키가 필요해요. 없어도 무료 횟수 내에서 사용 가능합니다!
+            </div>
+
+            <div class="guide-faq-item">
+                <strong>Q. 실제로 유튜브 채널이 만들어지나요?</strong><br>
+                아니요! 이 서비스는 <strong>채널 기획안(설계도)</strong>을 만들어주는 거예요. 실제 채널 생성은 유튜브에서 직접 하셔야 합니다.
+            </div>
+
+            <div class="guide-faq-item">
+                <strong>Q. 영상 스튜디오만 쓸 수 있나요?</strong><br>
+                네! 메인 페이지에서 "영상 스튜디오"를 바로 선택하시면 됩니다.
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer" style="margin-top: 40px;">
+        <div class="footer-nav">
+            <a href="/about.html">서비스 소개</a>
+            <a href="/privacy.html">개인정보처리방침</a>
+            <a href="/terms.html">이용약관</a>
+        </div>
+        <p class="copyright">© 2025 TubeKit AI</p>
+    </footer>
+</body>
+
+</html>
