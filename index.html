@@ -299,7 +299,12 @@
                     버그 제보, 기능 제안, 기타 문의사항을 남겨주세요.<br>
                     작성하신 내용은 개발자(관리자)에게 이메일로 전송됩니다.
                 </p>
-                <form id="contact-form" action="https://formspree.io/f/mqakpeag" method="POST">
+                <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                    <!-- Web3Forms Access Key -->
+                    <input type="hidden" name="access_key" value="0ca35f73-8e26-462e-978f-68a518c92283">
+                    <input type="hidden" name="subject" value="TubeKit AI 문의">
+                    <input type="hidden" name="from_name" value="TubeKit Contact Form">
+
                     <div class="form-group">
                         <label for="contact-email">이메일 (답변 받으실 분)</label>
                         <input type="email" id="contact-email" name="email" placeholder="name@example.com" required
@@ -311,8 +316,8 @@
                             required
                             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; resize: vertical;"></textarea>
                     </div>
-                    <!-- 자동 스팸 방지 (Honeypot) -->
-                    <input type="text" name="_gotcha" style="display:none">
+                    <!-- 스팸 방지 (Honeypot) -->
+                    <input type="checkbox" name="botcheck" class="hidden" style="display:none">
 
                     <button type="submit" class="submit-btn"
                         style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">전송하기</button>
