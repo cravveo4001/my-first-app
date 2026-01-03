@@ -296,7 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>${def.name}</span>
                 </div>
                 <div class="node-body">
-                    ${this.type === 'channel-name' ? (this.data.topic ? "주제: " + this.data.topic : '주제 입력 대기...') : '입력 대기 중...'}
+                    ${this.type === 'channel-name' ? (this.data.topic ? "주제: " + this.data.topic : '주제 입력 대기...') :
+                    this.type === 'topic-research' ? (this.data.topic ? "채널: " + this.data.topic : '채널 정보 대기...') : '입력 대기 중...'}
                 </div>
                 <div class="node-status ${this.status}"></div>
                 <div class="socket input"></div>
@@ -327,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (this.output) body.textContent = this.output.substring(0, 50) + (this.output.length > 50 ? '...' : '');
             else if (this.type === 'channel-name' && this.data.topic) body.textContent = "주제: " + this.data.topic;
+            else if (this.type === 'topic-research' && this.data.topic) body.textContent = "채널: " + this.data.topic;
         }
     }
 
