@@ -275,12 +275,22 @@
                 <div class="chip" onclick="sendSuggestion('브이로그 채널을 시작하고 싶어요')">📷 브이로그</div>
             </div>
 
-            <div class="chat-input-area">
+            <div class="chat-input-area" style="position: relative;">
+                <button type="button" id="force-recommend-btn"
+                    style="position: absolute; top: -50px; right: 0; background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px; transition: all 0.2s; z-index: 10;">
+                    ⚡ 바로 추천 받기
+                </button>
                 <input type="text" class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..."
-                    onkeypress="if(event.key === 'Enter') sendMessage()">
+                    onkeypress="handleKeyPress(event)">
                 <button class="chat-send-btn" id="send-btn" onclick="sendMessage()">전송</button>
             </div>
         </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>AI가 채널 아이디어를 분석 중입니다...</p>
     </div>
 
     <footer class="site-footer" style="margin-top: 40px;">
@@ -299,6 +309,50 @@
         const chatInput = document.getElementById('chat-input');
         const sendBtn = document.getElementById('send-btn');
         const suggestionChips = document.getElementById('suggestion-chips');
+        const forceRecommendBtn = document.getElementById('force-recommend-btn');
+
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Force Recommendation Logic
+        if (forceRecommendBtn) {
+            forceRecommendBtn.addEventListener('click', async () => {
+                const userMessage = "이제 충분해. 지금까지 내용으로 바로 채널을 추천해줘. [RECOMMENDATION] 형식으로 출력해.";
+
+                // Add user message (visually)
+                addMessage("⚡ 바로 추천해주세요!", true);
+                chatInput.value = '';
+
+                // Show typing
+                showTyping();
+
+                try {
+                    const response = await getAIResponse(userMessage);
+                    hideTyping();
+
+                    if (response.includes('[RECOMMENDATION]')) {
+                        const parts = response.split('[RECOMMENDATION]');
+                        addMessage(parts[0]);
+                        const recData = parseRecommendation(parts[1]);
+                        addRecommendationCard(recData);
+                    } else {
+                        addMessage(response);
+                    }
+
+                    conversationHistory.push({ role: 'user', content: userMessage });
+                    conversationHistory.push({ role: 'assistant', content: response });
+
+                } catch (error) {
+                    hideTyping();
+                    addMessage('오류가 발생했습니다.');
+                    console.error(error);
+                }
+            });
+        }
 
         let conversationHistory = [];
         let channelRecommendation = null;
