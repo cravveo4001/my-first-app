@@ -291,14 +291,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const toolbarItems = document.querySelectorAll('.toolbar-item');
 
     // --- Reset Workflow Feature (Moved to top for safety) ---
+    // --- Reset Workflow Feature (Moved to top for safety) ---
     const resetBtn = document.getElementById('reset-workflow-btn');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            if (confirm('⚠️ 경고: 모든 작업 내용을 삭제하고 초기 상태로 되돌립니다.\n\n정말 초기화하시겠습니까? (복구할 수 없습니다)')) {
-                localStorage.removeItem('tubekit_workflow_channel');
-                localStorage.removeItem('tubekit_workflow_video');
-                localStorage.removeItem('tubekit_channel_context');
-                window.location.href = window.location.pathname;
+            // 모드별 분기 처리
+            const isVideo = currentMode === 'video';
+            const modeName = isVideo ? '영상 스튜디오' : '채널 스튜디오';
+
+            if (confirm(`⚠️ 경고: [${modeName}]의 작업 내용을 모두 삭제하고 초기 상태로 되돌립니다.\n(다른 스튜디오의 데이터는 안전하게 유지됩니다)\n\n정말 초기화하시겠습니까?`)) {
+                if (isVideo) {
+                    localStorage.removeItem('tubekit_workflow_video');
+                    window.location.reload();
+                } else {
+                    localStorage.removeItem('tubekit_workflow_channel');
+                    localStorage.removeItem('tubekit_channel_context');
+                    window.location.href = window.location.pathname;
+                }
             }
         });
     }
