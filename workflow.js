@@ -917,4 +917,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         initChannelMode();
     }
+    // --- Reset Workflow Feature ---
+    const resetBtn = document.getElementById('reset-workflow-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm('⚠️ 경고: 모든 작업 내용을 삭제하고 초기 상태로 되돌립니다.\n\n정말 초기화하시겠습니까? (복구할 수 없습니다)')) {
+                localStorage.removeItem('tubekit_workflow_channel');
+                localStorage.removeItem('tubekit_workflow_video');
+                localStorage.removeItem('tubekit_channel_context');
+                // URL 파라미터도 제거하여 완전 초기 상태로 리로드
+                window.location.href = window.location.pathname;
+            }
+        });
+    }
+
 });
