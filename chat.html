@@ -275,11 +275,15 @@
                 <div class="chip" onclick="sendSuggestion('브이로그 채널을 시작하고 싶어요')">📷 브이로그</div>
             </div>
 
-            <div class="chat-input-area" style="position: relative;">
+            <!-- Toolbar area for Force Recommend -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px; padding: 0 10px;">
                 <button type="button" id="force-recommend-btn"
-                    style="position: absolute; top: -50px; right: 0; background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px; transition: all 0.2s; z-index: 10;">
-                    ⚡ 바로 추천 받기
+                    style="background: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe; padding: 6px 12px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; font-weight: 600;">
+                    ⚡ 대화 건너뛰고 바로 추천 받기
                 </button>
+            </div>
+
+            <div class="chat-input-area" style="position: relative;">
                 <input type="text" class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..."
                     onkeypress="handleKeyPress(event)">
                 <button class="chat-send-btn" id="send-btn" onclick="sendMessage()">전송</button>
@@ -292,6 +296,51 @@
         <div class="loading-spinner"></div>
         <p>AI가 채널 아이디어를 분석 중입니다...</p>
     </div>
+
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #force-recommend-btn:hover {
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 
     <footer class="site-footer" style="margin-top: 40px;">
         <div class="footer-nav">
