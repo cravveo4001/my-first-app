@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         connections.length = 0;
         nodesLayer.innerHTML = '';
         connectionsLayer.innerHTML = '';
+        sidebarContent.innerHTML = '<div class="empty-state"><p>노드를 선택하면<br>설정이 표시됩니다.</p></div>'; // 사이드바 초기화 추가
+        selectedNodeId = null; // 선택된 노드 ID 초기화
         nextNodeId = 1; // ID는 저장된 데이터 로드 시 재조정되므로 1로 리셋해도 무방하나, 로드 로직에서 max값 찾음.
 
         // 4. 모드 변경
