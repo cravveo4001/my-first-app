@@ -221,6 +221,44 @@
         }
     </style>
 
+    <!-- 영상 스튜디오 입력 모달 -->
+    <div id="video-input-modal" class="hidden"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div
+            style="background: #1e1e1e; border-radius: 16px; width: 90%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden;">
+            <div
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🎬</div>
+                <h2 style="color: white; margin: 0; font-size: 1.4rem;">영상 스튜디오에 오신 것을 환영합니다!</h2>
+                <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0; font-size: 0.9rem;">어떤 채널의 영상을 기획할까요?</p>
+            </div>
+            <div style="padding: 25px;">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: #aaa; font-size: 0.85rem; margin-bottom: 8px;">채널 주제 /
+                        채널명</label>
+                    <input type="text" id="video-channel-topic" placeholder="예: 편의점 리뷰, 게임 실황, 먹방"
+                        style="width: 100%; padding: 14px; border: 2px solid #3a3a3a; border-radius: 8px; background: #2a2a2a; color: white; font-size: 1rem; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: #aaa; font-size: 0.85rem; margin-bottom: 8px;">타겟 시청자
+                        (선택)</label>
+                    <input type="text" id="video-target-audience" placeholder="예: 20대 자취생, 야식러"
+                        style="width: 100%; padding: 14px; border: 2px solid #3a3a3a; border-radius: 8px; background: #2a2a2a; color: white; font-size: 1rem; box-sizing: border-box;">
+                </div>
+                <button id="video-modal-start"
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s;">
+                    시작하기 🚀
+                </button>
+                <p style="text-align: center; margin-top: 15px;">
+                    <button id="video-modal-skip"
+                        style="color: #888; background: none; border: none; cursor: pointer; font-size: 0.85rem;">
+                        건너뛰기 (일반 채널로 시작)
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- API Client (Shared) -->
     <script src="api-client.js"></script>
     <!-- Core Engine -->

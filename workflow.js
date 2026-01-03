@@ -63,29 +63,62 @@ document.addEventListener('DOMContentLoaded', () => {
         let context = JSON.parse(localStorage.getItem('tubekit_channel_context') || '{}');
         let topic = context.topic || '';
         let channelName = context.channelName || '';
+        let targetAudience = context.targetAudience || '';
 
-        // 저장된 채널 정보가 없으면 수동 입력 받기
-        if (!topic || topic === '(주제 미설정)') {
-            const userInput = prompt(
-                '🎬 영상 스튜디오에 오신 것을 환영합니다!\n\n' +
-                '채널 주제 또는 채널명을 입력해주세요.\n' +
-                '(예: 편의점 리뷰, 게임 실황, 먹방)\n\n' +
-                '입력하지 않으면 "일반 채널"로 시작합니다.',
-                ''
-            );
-
-            if (userInput && userInput.trim()) {
-                topic = userInput.trim();
-                channelName = userInput.trim();
-                // 입력받은 정보 저장
-                context.topic = topic;
-                context.channelName = channelName;
-                localStorage.setItem('tubekit_channel_context', JSON.stringify(context));
-            } else {
-                topic = '일반 채널';
-            }
+        // 저장된 채널 정보가 있으면 바로 시작
+        if (topic && topic !== '(주제 미설정)') {
+            startVideoStudio(topic, channelName, targetAudience);
+            return;
         }
 
+        // 저장된 채널 정보가 없으면 모달 표시
+        const modal = document.getElementById('video-input-modal');
+        const topicInput = document.getElementById('video-channel-topic');
+        const audienceInput = document.getElementById('video-target-audience');
+        const startBtn = document.getElementById('video-modal-start');
+        const skipBtn = document.getElementById('video-modal-skip');
+
+        if (!modal) {
+            // 모달이 없으면 기본값으로 시작
+            startVideoStudio('일반 채널', '', '');
+            return;
+        }
+
+        // 모달 표시
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        topicInput.focus();
+
+        // 시작하기 버튼
+        startBtn.onclick = function () {
+            const userTopic = topicInput.value.trim() || '일반 채널';
+            const userAudience = audienceInput.value.trim();
+
+            // 컨텍스트 저장
+            context.topic = userTopic;
+            context.channelName = userTopic;
+            context.targetAudience = userAudience;
+            localStorage.setItem('tubekit_channel_context', JSON.stringify(context));
+
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            startVideoStudio(userTopic, userTopic, userAudience);
+        };
+
+        // 건너뛰기 버튼
+        skipBtn.onclick = function () {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            startVideoStudio('일반 채널', '', '');
+        };
+
+        // Enter 키 지원
+        topicInput.onkeydown = function (e) {
+            if (e.key === 'Enter') startBtn.click();
+        };
+    }
+
+    function startVideoStudio(topic, channelName, targetAudience) {
         const c1x = 350, c2x = 750;
         const startY = 100, gapY = 250;
 
@@ -93,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const v1 = new Node('topic-research', c1x, startY);
         v1.data.topic = topic;
         v1.data.channelName = channelName;
+        v1.data.targetAudience = targetAudience;
 
         const v2 = new Node('video-metadata', c1x, startY + gapY);
         const v3 = new Node('script-gen', c1x, startY + gapY * 2);
@@ -107,13 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         selectNode(v1);
         updateCanvasTransform();
-
-        // 안내 메시지 표시
-        const infoMsg = channelName ?
-            `🎬 영상 스튜디오 시작!\n\n채널: ${channelName}\n주제: ${topic}\n\n이제 영상 아이디어를 기획하세요!` :
-            `🎬 영상 스튜디오 시작!\n\n주제: ${topic}\n\n첫 번째 노드에서 "실행"을 눌러 시작하세요!`;
-
-        alert(infoMsg);
     }
 
     function initChannelMode() {
