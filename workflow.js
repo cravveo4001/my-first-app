@@ -162,39 +162,87 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initChannelMode() {
-        // Same as original initialization
-        const urlParams = new URLSearchParams(window.location.search);
-        const initialTopic = urlParams.get('topic');
-
         const c1x = 350, c2x = 750, c3x = 1150;
         const startY = 100, gapY = 250;
 
-        const n1 = new Node('channel-name', c1x, startY);
-        if (initialTopic) n1.data.topic = initialTopic;
+        // 1. Try to restore from LocalStorage
+        const savedState = JSON.parse(localStorage.getItem('tubekit_channel_workflow') || 'null');
 
-        const n2 = new Node('channel-handle', c1x, startY + gapY);
-        const n3 = new Node('target-audience', c1x, startY + gapY * 2);
-        if (initialTopic) n3.data.topic = initialTopic;
+        if (savedState && savedState.nodes && savedState.nodes.length > 0) {
+            // Restore nodes
+            savedState.nodes.forEach(nData => {
+                const n = new Node(nData.type, nData.x, nData.y);
+                n.id = nData.id; // Restore ID to keep connections valid
+                n.data = nData.data;
+                n.output = nData.output;
+                n.status = nData.status || 'idle';
+                nodes.push(n);
+                nodesLayer.appendChild(n.element);
+                n.updateSummary();
+                n.updatePosition();
+            });
 
-        const n4 = new Node('profile-pic', c2x, startY);
-        const n5 = new Node('banner-image', c2x, startY + gapY);
+            // Restore connections
+            if (savedState.connections) {
+                savedState.connections.forEach(c => {
+                    const fromNode = nodes.find(n => n.id === c.from);
+                    const toNode = nodes.find(n => n.id === c.to);
+                    if (fromNode && toNode) connectNodes(fromNode, toNode);
+                });
+            }
 
-        const nSet1 = new Node('settings-general', c3x, startY);
-        const nSet2 = new Node('settings-channel', c3x, startY + gapY);
-        const nSet3 = new Node('settings-upload', c3x, startY + gapY * 2);
+            // Update nextNodeId to avoid collision
+            nextNodeId = Math.max(...nodes.map(n => n.id)) + 1;
 
-        [n1, n2, n3, n4, n5, nSet1, nSet2, nSet3].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
+        } else {
+            // 2. Initialize New Default Workflow (Original Logic)
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialTopic = urlParams.get('topic');
 
-        connectNodes(n1, n2);
-        connectNodes(n1, n3);
-        connectNodes(n1, n4);
-        connectNodes(n1, n5);
-        connectNodes(n3, nSet2);
-        connectNodes(nSet2, nSet3);
-        connectNodes(nSet1, nSet2);
+            const n1 = new Node('channel-name', c1x, startY);
+            if (initialTopic) n1.data.topic = initialTopic;
+            // Also update topic-research if needed? No, standard flow.
 
-        selectNode(n1);
+            const n2 = new Node('channel-handle', c1x, startY + gapY);
+            const n3 = new Node('target-audience', c1x, startY + gapY * 2);
+            if (initialTopic) n3.data.topic = initialTopic;
+
+            const n4 = new Node('profile-pic', c2x, startY);
+            const n5 = new Node('banner-image', c2x, startY + gapY);
+
+            const nSet1 = new Node('settings-general', c3x, startY);
+            const nSet2 = new Node('settings-channel', c3x, startY + gapY);
+            const nSet3 = new Node('settings-upload', c3x, startY + gapY * 2);
+
+            [n1, n2, n3, n4, n5, nSet1, nSet2, nSet3].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
+
+            connectNodes(n1, n2);
+            connectNodes(n1, n3);
+            connectNodes(n1, n4);
+            connectNodes(n1, n5);
+            connectNodes(n3, nSet2);
+            connectNodes(nSet2, nSet3);
+            connectNodes(nSet1, nSet2);
+        }
+
         updateCanvasTransform();
+    }
+
+    // New Function: Save Workflow State
+    function saveWorkflowState() {
+        const state = {
+            nodes: nodes.map(n => ({
+                id: n.id,
+                type: n.type,
+                x: n.x,
+                y: n.y,
+                data: n.data,
+                output: n.output,
+                status: n.status
+            })),
+            connections: connections.map(c => ({ from: c.from.id, to: c.to.id }))
+        };
+        localStorage.setItem('tubekit_channel_workflow', JSON.stringify(state));
     }
 
     // --- DOM Elements ---
@@ -344,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
             node.y = initialY + (e.clientY - startY) / scale;
             node.updatePosition(); updateConnections();
         }
-        function onMouseUp() { document.removeEventListener('mousemove', onMouseMove); isDraggingNode = false; }
+        function onMouseUp() { document.removeEventListener('mousemove', onMouseMove); isDraggingNode = false; saveWorkflowState(); }
         document.addEventListener('mousemove', onMouseMove); document.addEventListener('mouseup', onMouseUp);
     }
 
@@ -443,11 +491,11 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebarContent.innerHTML = html;
 
         // Bind Events
-        document.getElementById('prop-model').addEventListener('change', (e) => node.data.model = e.target.value);
-        document.getElementById('prop-output').addEventListener('input', (e) => { node.output = e.target.value; node.updateSummary(); });
+        document.getElementById('prop-model').addEventListener('change', (e) => { node.data.model = e.target.value; saveWorkflowState(); });
+        document.getElementById('prop-output').addEventListener('input', (e) => { node.output = e.target.value; node.updateSummary(); saveWorkflowState(); });
         document.getElementById(`btn-run-${node.id}`).addEventListener('click', () => executeNode(node));
         document.getElementById(`btn-delete-${node.id}`).addEventListener('click', () => deleteNode(node));
-        if (def.props) def.props.forEach(p => document.getElementById(`prop-${p.id}`).addEventListener('input', (e) => { node.data[p.id] = e.target.value; node.updateSummary(); }));
+        if (def.props) def.props.forEach(p => document.getElementById(`prop-${p.id}`).addEventListener('input', (e) => { node.data[p.id] = e.target.value; node.updateSummary(); saveWorkflowState(); }));
     }
 
     function deleteNode(node) {
@@ -547,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
             node.status = 'error'; node.output = "Error: " + e.message;
         }
         node.updateSummary(); renderProperties(node);
+        saveWorkflowState(); // Auto-save after execution
     }
 
     document.getElementById('run-workflow-btn').addEventListener('click', async () => {
