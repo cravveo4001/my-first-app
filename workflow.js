@@ -65,57 +65,75 @@ document.addEventListener('DOMContentLoaded', () => {
         let channelName = context.channelName || '';
         let targetAudience = context.targetAudience || '';
 
-        // 저장된 채널 정보가 있으면 바로 시작
-        if (topic && topic !== '(주제 미설정)') {
+        // 모달 요소 확인
+        const modal = document.getElementById('video-input-modal');
+
+        // 저장된 채널 정보가 있으면 바로 시작 (모달 표시 안함)
+        if (topic && topic !== '(주제 미설정)' && topic !== '') {
+            if (modal) modal.style.display = 'none';
             startVideoStudio(topic, channelName, targetAudience);
             return;
         }
 
-        // 저장된 채널 정보가 없으면 모달 표시
-        const modal = document.getElementById('video-input-modal');
+        // 모달이 없으면 기본값으로 시작
+        if (!modal) {
+            startVideoStudio('일반 채널', '', '');
+            return;
+        }
+
         const topicInput = document.getElementById('video-channel-topic');
         const audienceInput = document.getElementById('video-target-audience');
         const startBtn = document.getElementById('video-modal-start');
         const skipBtn = document.getElementById('video-modal-skip');
 
-        if (!modal) {
-            // 모달이 없으면 기본값으로 시작
-            startVideoStudio('일반 채널', '', '');
-            return;
-        }
-
         // 모달 표시
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
-        topicInput.focus();
+        if (topicInput) topicInput.focus();
 
-        // 시작하기 버튼
-        startBtn.onclick = function () {
-            const userTopic = topicInput.value.trim() || '일반 채널';
-            const userAudience = audienceInput.value.trim();
+        // 시작하기 버튼 - addEventListener 사용
+        if (startBtn) {
+            startBtn.addEventListener('click', function handleStart() {
+                const userTopic = topicInput ? topicInput.value.trim() : '';
+                const userAudience = audienceInput ? audienceInput.value.trim() : '';
+                const finalTopic = userTopic || '일반 채널';
 
-            // 컨텍스트 저장
-            context.topic = userTopic;
-            context.channelName = userTopic;
-            context.targetAudience = userAudience;
-            localStorage.setItem('tubekit_channel_context', JSON.stringify(context));
+                // 컨텍스트 저장
+                const newContext = {
+                    topic: finalTopic,
+                    channelName: finalTopic,
+                    targetAudience: userAudience
+                };
+                localStorage.setItem('tubekit_channel_context', JSON.stringify(newContext));
 
-            modal.classList.add('hidden');
-            modal.style.display = 'none';
-            startVideoStudio(userTopic, userTopic, userAudience);
-        };
+                // 모달 숨기기
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+
+                // 스튜디오 시작
+                startVideoStudio(finalTopic, finalTopic, userAudience);
+
+                // 이벤트 리스너 제거 (중복 방지)
+                startBtn.removeEventListener('click', handleStart);
+            });
+        }
 
         // 건너뛰기 버튼
-        skipBtn.onclick = function () {
-            modal.classList.add('hidden');
-            modal.style.display = 'none';
-            startVideoStudio('일반 채널', '', '');
-        };
+        if (skipBtn) {
+            skipBtn.addEventListener('click', function handleSkip() {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+                startVideoStudio('일반 채널', '', '');
+                skipBtn.removeEventListener('click', handleSkip);
+            });
+        }
 
         // Enter 키 지원
-        topicInput.onkeydown = function (e) {
-            if (e.key === 'Enter') startBtn.click();
-        };
+        if (topicInput) {
+            topicInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && startBtn) startBtn.click();
+            });
+        }
     }
 
     function startVideoStudio(topic, channelName, targetAudience) {
