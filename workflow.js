@@ -59,7 +59,53 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Channel context saved:', context);
     }
 
+    function saveWorkflowState() {
+        const key = currentMode === 'video' ? 'tubekit_workflow_video' : 'tubekit_workflow_channel';
+        const state = {
+            nodes: nodes.map(n => ({
+                id: n.id,
+                type: n.type,
+                x: n.x,
+                y: n.y,
+                data: n.data,
+                output: n.output,
+                status: n.status
+            })),
+            connections: connections.map(c => ({ from: c.from.id, to: c.to.id }))
+        };
+        localStorage.setItem(key, JSON.stringify(state));
+    }
+
     function initVideoMode() {
+        // 1. Try to restore from LocalStorage
+        const savedState = JSON.parse(localStorage.getItem('tubekit_workflow_video') || 'null');
+
+        if (savedState && savedState.nodes && savedState.nodes.length > 0) {
+            // Restore nodes
+            savedState.nodes.forEach(nData => {
+                const n = new Node(nData.type, nData.x, nData.y);
+                n.id = nData.id;
+                n.data = nData.data;
+                n.output = nData.output;
+                n.status = nData.status || 'idle';
+                nodes.push(n);
+                nodesLayer.appendChild(n.element);
+                n.updateSummary();
+            });
+            // Restore connections
+            if (savedState.connections) {
+                savedState.connections.forEach(c => {
+                    const fromNode = nodes.find(n => n.id === c.from);
+                    const toNode = nodes.find(n => n.id === c.to);
+                    if (fromNode && toNode) connectNodes(fromNode, toNode);
+                });
+            }
+            nextNodeId = Math.max(...nodes.map(n => n.id)) + 1;
+            updateCanvasTransform();
+            return;
+        }
+
+        // 2. Default Init (Original Logic)
         let context = JSON.parse(localStorage.getItem('tubekit_channel_context') || '{}');
         let topic = context.topic || '';
         let channelName = context.channelName || '';
@@ -229,21 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // New Function: Save Workflow State
-    function saveWorkflowState() {
-        const state = {
-            nodes: nodes.map(n => ({
-                id: n.id,
-                type: n.type,
-                x: n.x,
-                y: n.y,
-                data: n.data,
-                output: n.output,
-                status: n.status
-            })),
-            connections: connections.map(c => ({ from: c.from.id, to: c.to.id }))
-        };
-        localStorage.setItem('tubekit_channel_workflow', JSON.stringify(state));
-    }
+
 
     // --- DOM Elements ---
     const canvasContainer = document.getElementById('canvas-container');
