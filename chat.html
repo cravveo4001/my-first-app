@@ -370,20 +370,25 @@
         // Force Recommendation Logic
         if (forceRecommendBtn) {
             forceRecommendBtn.addEventListener('click', async () => {
-                let userMessage = "";
                 const currentInput = chatInput.value.trim();
 
+                // 대화 내역도 없고, 입력창도 비어있으면 -> 무작정 추천하지 말고 입력 유도
                 if (conversationHistory.length === 0 && !currentInput) {
-                    // 맥락이 아예 없을 때 (랜덤 추천 모드)
-                    userMessage = "나 아직 아무 말도 안 했는데 그냥 추천받고 싶어. 완전히 랜덤하고 창의적인 유튜브 채널 아이디어를 하나 추천해줘. '요리'나 '브이로그' 같은 뻔한 거 말고, 아주 독특한 걸로 부탁해. [RECOMMENDATION] 형식으로 바로 출력해.";
-                } else {
-                    // 맥락이 있을 때
-                    const contextInput = currentInput ? ` (추가 요청: ${currentInput})` : "";
-                    userMessage = `이제 충분해. 지금까지 내용${contextInput}을 바탕으로 바로 채널을 추천해줘. [RECOMMENDATION] 형식으로 출력해.`;
+                    addMessage("😅 어떤 채널을 만들고 싶으신지 키워드 하나만이라도 알려주세요! (예: 요리, 여행, 게임)", false);
+                    chatInput.focus();
+                    return;
                 }
 
-                // Add user message (visually)
-                addMessage("⚡ 바로 추천해주세요!", true);
+                // 맥락이 있거나 입력값이 있는 경우 -> 강제 추천 요청
+                let userMessage;
+                if (currentInput) {
+                    userMessage = `지금까지 대화 내용과 추가 요청('${currentInput}')을 종합해서, 가장 적합한 유튜브 채널을 바로 추천해줘. [RECOMMENDATION] 형식으로 즉시 출력해.`;
+                } else {
+                    userMessage = "지금까지 나눈 대화를 바탕으로 결론을 내려줘. 가장 적합한 유튜브 채널을 바로 추천해줘. [RECOMMENDATION] 형식으로 즉시 출력해.";
+                }
+
+                // Add user message (visually) but keep it simple
+                addMessage("🏁 상담 종료하고 결과 보여줘", true);
                 chatInput.value = '';
 
                 // Show typing
@@ -395,7 +400,9 @@
 
                     if (response.includes('[RECOMMENDATION]')) {
                         const parts = response.split('[RECOMMENDATION]');
-                        addMessage(parts[0]);
+                        // 불필요한 서론(알겠습니다 등) 제거하고 결과만 보여주기 위해 parts[0]는 무시하거나 짧게 처리
+                        if (parts[0].length < 20) addMessage(parts[0]); // 짧은 멘트만 출력
+
                         const recData = parseRecommendation(parts[1]);
                         addRecommendationCard(recData);
                     } else {
