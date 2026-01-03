@@ -60,8 +60,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initVideoMode() {
-        const context = JSON.parse(localStorage.getItem('tubekit_channel_context') || '{}');
-        const topic = context.topic || '(주제 미설정)';
+        let context = JSON.parse(localStorage.getItem('tubekit_channel_context') || '{}');
+        let topic = context.topic || '';
+        let channelName = context.channelName || '';
+
+        // 저장된 채널 정보가 없으면 수동 입력 받기
+        if (!topic || topic === '(주제 미설정)') {
+            const userInput = prompt(
+                '🎬 영상 스튜디오에 오신 것을 환영합니다!\n\n' +
+                '채널 주제 또는 채널명을 입력해주세요.\n' +
+                '(예: 편의점 리뷰, 게임 실황, 먹방)\n\n' +
+                '입력하지 않으면 "일반 채널"로 시작합니다.',
+                ''
+            );
+
+            if (userInput && userInput.trim()) {
+                topic = userInput.trim();
+                channelName = userInput.trim();
+                // 입력받은 정보 저장
+                context.topic = topic;
+                context.channelName = channelName;
+                localStorage.setItem('tubekit_channel_context', JSON.stringify(context));
+            } else {
+                topic = '일반 채널';
+            }
+        }
 
         const c1x = 350, c2x = 750;
         const startY = 100, gapY = 250;
@@ -69,11 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Video Nodes
         const v1 = new Node('topic-research', c1x, startY);
         v1.data.topic = topic;
+        v1.data.channelName = channelName;
 
         const v2 = new Node('video-metadata', c1x, startY + gapY);
         const v3 = new Node('script-gen', c1x, startY + gapY * 2);
 
-        const v4 = new Node('translator', c2x, startY + gapY);
+        const v4 = new Node('translator', c2x, startY);
 
         [v1, v2, v3, v4].forEach(n => { nodes.push(n); nodesLayer.appendChild(n.element); n.updateSummary(); });
 
@@ -84,7 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
         selectNode(v1);
         updateCanvasTransform();
 
-        alert(`🎬 영상 스튜디오 모드!\n\n저장된 채널 정보: ${topic}\n\n이제 이 채널에 맞는 영상 아이디어를 기획하세요.`);
+        // 안내 메시지 표시
+        const infoMsg = channelName ?
+            `🎬 영상 스튜디오 시작!\n\n채널: ${channelName}\n주제: ${topic}\n\n이제 영상 아이디어를 기획하세요!` :
+            `🎬 영상 스튜디오 시작!\n\n주제: ${topic}\n\n첫 번째 노드에서 "실행"을 눌러 시작하세요!`;
+
+        alert(infoMsg);
     }
 
     function initChannelMode() {
